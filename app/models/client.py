@@ -2,8 +2,9 @@ from app.database import Base
 from sqlalchemy import Integer, String, DateTime, Boolean, Enum, Column
 import enum
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
-class Status(str, enum.Enum):
+class ClientStatus(str, enum.Enum):
     waiting = "waiting"
     negotiating = "negotiating"
     closed = "closed"
@@ -14,8 +15,10 @@ class Client(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(200), nullable=False)
-    status = Column(Enum(Status), nullable=False)
+    status = Column(Enum(ClientStatus), nullable=False)
     phone = Column(String(50))
     email = Column(String(200))
     notes = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    interests = relationship("ClientVehicleInterest", back_populates="client")

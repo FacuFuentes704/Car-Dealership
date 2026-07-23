@@ -2,6 +2,7 @@ from app.database import Base
 from sqlalchemy import String, Integer, DateTime, Boolean, Column, Enum
 import enum
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 class Fuel_Type(str, enum.Enum):
     gasolina = "gasolina"
@@ -35,3 +36,5 @@ class Vehicle(Base):
     price = Column(Integer, nullable=False)
     description = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    interested_clients = relationship("ClientVehicleInterest", back_populates="vehicle")
