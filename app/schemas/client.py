@@ -10,6 +10,7 @@ class ClientCreate(BaseModel):
     phone: Optional[str] = None
     email: Optional[EmailStr] = None
     notes: Optional[str] = None
+    vehicle_ids: Optional[list[int]] = []
 
 class ClientResponse(BaseModel):
     id: int
