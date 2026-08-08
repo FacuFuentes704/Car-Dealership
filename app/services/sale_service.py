@@ -25,7 +25,7 @@ def update_sale(db:Session, sale_data: SaleUpdate, sale_id: int):
     if not resultado:
         raise HTTPException(status_code=404, detail="Resultado no encontrado")
     datos = sale_data.model_dump(exclude_unset=True)
-    for campo, valor in datos:
+    for campo, valor in datos.items():
         setattr(resultado, campo, valor)
     db.commit()
     db.refresh(resultado)
@@ -36,5 +36,5 @@ def delete_sale(db: Session, sale_id:int):
     if not resultado:
         raise HTTPException(status_code=404, detail="Venta no encontrada")
     db.delete(resultado)
-    db.commit
+    db.commit()
     return
