@@ -5,7 +5,7 @@ from app.auth.auth import hash_password, verify_password
 from app.auth.jwt import create_access_token
 from fastapi import HTTPException
 
-def register_user(db: Session, user_data: UserCreate):
+def register_user(user_data: UserCreate, db: Session):
     resultado = db.query(User).filter(User.email == user_data.email).first()
     if resultado:
         raise HTTPException(status_code=400, detail="Email duplicado")
