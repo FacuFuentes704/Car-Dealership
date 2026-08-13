@@ -1,4 +1,6 @@
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, File, UploadFile
+from app.schemas.photo import PhotoResponse
+from app.services.photo_service import upload_photo
 from sqlalchemy.orm import Session
 from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
 from app.services.vehicle_service import create_vehicle, update_vehicle, delete_vehicle, get_vehicles, get_vehicles_by_id
@@ -28,3 +30,13 @@ def show_by_id(vehicle_id: int, db:Session = Depends(get_db)):
 @vehicles_router.delete("/{vehicle_id}", response_model=VehicleResponse)
 def delete(vehicle_id: int, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
     return delete_vehicle(db, vehicle_id)
+
+@vehicles_router.post("/{vehicle_id}/photos", response_model=list[PhotoResponse])
+def photos(vehicle_id: int, db: Session = Depends(get_db), photos: list[UploadFile] = File(), user_id: User = Depends(get_current_user)):
+    fotos_subidas = []
+    for i, photo in enumerate(photos):
+        is_main = i == 0
+        foto_subida = upload_photo(db, vehicle_id, is_main, photo)
+        fotos_subidas.append(foto_subida)
+    return fotos_subidas
+
