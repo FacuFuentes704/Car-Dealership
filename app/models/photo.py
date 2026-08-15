@@ -11,4 +11,4 @@ class Photo(Base):
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False, index=True)
     is_main = Column(Boolean, default=False)
 
-    vehicle = relationship("Vehicle", back_populates="photo")
+    vehicle = relationship("Vehicle", back_populates="photos")

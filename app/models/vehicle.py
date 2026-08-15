@@ -38,3 +38,4 @@ class Vehicle(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     interested_clients = relationship("ClientVehicleInterest", back_populates="vehicle")
+    photos = relationship("Photo", back_populates="vehicle")

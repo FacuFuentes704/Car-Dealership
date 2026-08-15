@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 from app.models.vehicle import Fuel_Type, Status, Transmission
+from app.schemas.photo import PhotoResponse
 
 class VehicleCreate(BaseModel):
     fuel_type: Optional[Fuel_Type] = Fuel_Type.gasolina
@@ -21,6 +22,7 @@ class VehicleResponse(BaseModel):
     status: Status
     transmission: Transmission
     color: Optional[str] = None
+    photos: list[PhotoResponse] = []
     brand: str
     fuel_type: Fuel_Type
     model: str
