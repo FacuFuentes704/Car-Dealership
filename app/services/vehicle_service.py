@@ -12,10 +12,35 @@ def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     db.commit()
     db.refresh(new_vehicle)
     return new_vehicle
-    
-def get_vehicles(db: Session):
-    resultado = db.query(Vehicle).all()
-    return resultado
+
+def get_vehicles(db: Session, brand: str = None, model: str = None, year: int = None, km: int = None, price_min: int = None, price_max: int = None, fuel_type: Fuel_Type = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
+    query = db.query(Vehicle)
+    filtros = {
+        Vehicle.brand: brand,
+        Vehicle.model: model,
+        Vehicle.year: year,
+        Vehicle.km: km,
+        Vehicle.fuel_type: fuel_type,
+        Vehicle.transmission: transmission,
+        Vehicle.status: status,
+    }
+    for campo, valor in filtros.items():
+        if valor:
+            query = query.filter(campo == valor)
+    if price_min:
+        query = query.filter(Vehicle.price >= price_min)
+
+    if price_max:
+        query = query.filter(Vehicle.price <= price_max)
+
+    if km_max:
+        query = query.filter(Vehicle.km <= km_max)
+
+    if search:
+        query = query.filter(
+            Vehicle.brand.ilike(f"%{search}%") |
+            Vehicle.model.ilike(f"%{search}%")
+        )
 
 def get_vehicles_by_id(db: Session, vehicle_id: int):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()

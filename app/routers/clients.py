@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter
 from app.database import get_db
 from app.auth.auth import get_current_user
-from app.services.client_service import get_client_by_id, get_clients, delete_client, create_client, update_client
+from app.services.client_service import get_client_by_id, get_clients, delete_client, create_client, update_client, add_client_interest
 from app.schemas.client import ClientCreate, ClientResponse, ClientStatus, ClientUpdate
 from app.models.user import User
 from sqlalchemy.orm import Session
@@ -28,3 +28,7 @@ def update(client_id: int, db:Session = Depends(get_db), user_id: User = Depends
 @clients_router.delete("/{client_id}", status_code=204)
 def delete(client_id: int, db:Session = Depends(get_db), user_id: User = Depends(get_current_user)):
     return delete_client(db, client_id)
+
+@clients_router.post("/{client_id}/interests/{vehicle_id}", response_model= ClientResponse)
+def create_interest(client_id: int, vehicle_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    return add_client_interest(db, client_id, vehicle_id)
