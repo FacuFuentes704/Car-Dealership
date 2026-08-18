@@ -1,6 +1,7 @@
 from fastapi import Depends, APIRouter, File, UploadFile
 from app.schemas.photo import PhotoResponse
 from app.services.photo_service import upload_photo, update_photo
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
 from app.services.vehicle_service import create_vehicle, update_vehicle, delete_vehicle, get_vehicles, get_vehicles_by_id
@@ -16,8 +17,20 @@ def create(vehicle_data: VehicleCreate, db: Session = Depends(get_db), user_id: 
     return create_vehicle(db, vehicle_data)
 
 @vehicles_router.get("/", response_model=list[VehicleResponse])
-def show_vehicles(db: Session = Depends(get_db)):
-    return get_vehicles(db)
+def show_vehicles(
+    db: Session = Depends(get_db),
+    brand: Optional[str] = None,
+    model: Optional[str] = None,
+    year: Optional[int] = None,
+    price_min: Optional[int] = None,
+    price_max: Optional[int] = None,
+    fuel_type: Optional[str] = None,
+    transmission: Optional[str] = None,
+    status: Optional[str] = None,
+    km_max: Optional[int] = None,
+    search: Optional[str] = None
+):
+    return get_vehicles(db, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
 
 @vehicles_router.patch("/{vehicle_id}", response_model=VehicleResponse)
 def update(vehicle_id: int, vehicle_data: VehicleUpdate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
