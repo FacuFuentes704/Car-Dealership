@@ -12,7 +12,8 @@ def upload_photo(db: Session, vehicle_id: int, is_main: bool, photo: UploadFile)
     contenido = photo.file.read()
     resultado = cloudinary.uploader.upload(contenido)
     url = resultado["secure_url"]
-    new_photo = Photo(url=url, vehicle_id=vehicle_id, is_main=is_main)
+    public_id = resultado["public_id"]
+    new_photo = Photo(url=url, vehicle_id=vehicle_id, is_main=is_main, public_id = public_id)
     db.add(new_photo)
     db.commit()
     db.refresh(new_photo)
@@ -35,3 +36,13 @@ def update_photo(db: Session, photo_id: int, vehicle_id: int):
     db.commit()
     db.refresh(foto_principal)
     return foto_principal
+
+def delete_photos(db: Session, photo_id: int):
+    resultado = db.query(Photo).filter(Photo.id == photo_id).first()
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Foto no encontrada")
+    public_id = resultado.public_id
+    cloudinary.uploader.destroy(public_id)
+    db.delete(resultado)
+    db.commit()
+    return

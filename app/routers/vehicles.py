@@ -1,6 +1,6 @@
 from fastapi import Depends, APIRouter, File, UploadFile
 from app.schemas.photo import PhotoResponse
-from app.services.photo_service import upload_photo, update_photo
+from app.services.photo_service import upload_photo, update_photo, delete_photos
 from typing import Optional
 from sqlalchemy.orm import Session
 from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
@@ -56,3 +56,7 @@ def photos(vehicle_id: int, db: Session = Depends(get_db), photos: list[UploadFi
 @vehicles_router.patch("/{vehicle_id}/photos/{photo_id}", response_model=PhotoResponse)
 def up_photo(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
     return update_photo(db, photo_id, vehicle_id)
+
+@vehicles_router.delete("/{vehicle_id}/photos/{photo_id}", status_code=204)
+def delete_foto(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    return delete_photos(db, photo_id)
