@@ -36,11 +36,7 @@ def show_vehicles(
 def update(vehicle_id: int, vehicle_data: VehicleUpdate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
     return update_vehicle(db, vehicle_data, vehicle_id)
 
-@vehicles_router.get("/{vehicle_id}", response_model=VehicleResponse)
-def show_by_id(vehicle_id: int, db:Session = Depends(get_db)):
-    return get_vehicles_by_id(db, vehicle_id)
-
-@vehicles_router.delete("/{vehicle_id}", response_model=VehicleResponse)
+@vehicles_router.delete("/{vehicle_id}", status_code=204)
 def delete(vehicle_id: int, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
     return delete_vehicle(db, vehicle_id)
 
@@ -56,6 +52,10 @@ def photos(vehicle_id: int, db: Session = Depends(get_db), photos: list[UploadFi
 @vehicles_router.patch("/{vehicle_id}/photos/{photo_id}", response_model=PhotoResponse)
 def up_photo(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
     return update_photo(db, photo_id, vehicle_id)
+
+@vehicles_router.get("/{vehicle_id}", response_model=VehicleResponse)
+def show_by_id(vehicle_id: int, db: Session = Depends(get_db)):
+    return get_vehicles_by_id(db, vehicle_id)
 
 @vehicles_router.delete("/{vehicle_id}/photos/{photo_id}", status_code=204)
 def delete_foto(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):

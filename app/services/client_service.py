@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from app.models.client import Client
 from app.models.client_vehicle_interest import ClientVehicleInterest
 from app.schemas.client import ClientStatus, ClientCreate, ClientResponse, ClientUpdate
+from app.models.vehicle import Vehicle
+from app.models.client_vehicle_interest import ClientVehicleInterest
 
 def create_client(db: Session, client_data: ClientCreate):
     resultado = db.query(Client).filter(client_data.phone == Client.phone).first()
@@ -52,3 +54,22 @@ def delete_client(db: Session, client_id: int):
     db.delete(resultado)
     db.commit()
     return
+
+def add_client_interest(db: Session, client_id: int, vehicle_id: int):
+    resultado = db.query(Client).filter(Client.id == client_id).first()
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    vehiculo = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+    if not vehiculo:
+        raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
+    query = db.query(ClientVehicleInterest).filter(
+        ClientVehicleInterest.client_id == client_id,
+        ClientVehicleInterest.vehicle_id == vehicle_id
+    ).first()
+    if query:
+        raise HTTPException(status_code=400, detail="Vehiculo ya registrado en intereses del cliente")
+    new_interest = ClientVehicleInterest(client_id=client_id, vehicle_id=vehicle_id)
+    db.add(new_interest)
+    db.commit()
+    db.refresh(new_interest)
+    return new_interest

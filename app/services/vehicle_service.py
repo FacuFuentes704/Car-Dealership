@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
+from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate, Fuel_Type, Status, Transmission
 from app.models.vehicle import Vehicle
 from sqlalchemy.orm import Session
 
@@ -41,8 +41,8 @@ def get_vehicles(db: Session, brand: str = None, model: str = None, year: int = 
             Vehicle.brand.ilike(f"%{search}%") |
             Vehicle.model.ilike(f"%{search}%")
         )
-
-def get_vehicles_by_id(db: Session, vehicle_id: int):
+    
+def get_vehicles_by_id(db: Session, vehicle_id: int, ):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
