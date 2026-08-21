@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.models.client import Client
+from app.models.client import Client, ClientStatus
 from app.models.client_vehicle_interest import ClientVehicleInterest
 from app.schemas.client import ClientStatus, ClientCreate, ClientResponse, ClientUpdate
 from app.models.vehicle import Vehicle
@@ -26,9 +26,17 @@ def create_client(db: Session, client_data: ClientCreate):
     db.refresh(new_client)
     return new_client
 
-def get_clients(db: Session):
-    resultado = db.query(Client).all()
-    return resultado
+def get_clients(db: Session, status: ClientStatus = None, search: str = None):
+    query = db.query(Client)
+    if status:
+        query = query.filter(Client.status == status)
+    if search:
+        query = query.filter(
+            Client.name.ilike(f"%{search}%") |
+            Client.phone.ilike(f"%{search}%") |
+            Client.email.ilike(f"%{search}%")
+        )
+    return query.all()
 
 def get_client_by_id(db: Session, client_id: int):
     resultado = db.query(Client).filter(Client.id == client_id).first()
