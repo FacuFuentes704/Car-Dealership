@@ -4,21 +4,21 @@ import enum
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
-class Fuel_Type(str, enum.Enum):
-    gasolina = "gasolina"
+class FuelType(str, enum.Enum):
+    gasoline = "gasoline"
     diesel = "diesel"
-    hibrido = "hibrido"
-    gasolina_gnc = "gasolina con gnc"
-    diesel_gnc = "diesel con gnc"
+    hybrid = "hybrid"
+    gasoline_gnc = "gasoline_gnc"
+    diesel_gnc = "diesel_gnc"
 
 class Transmission(str, enum.Enum):
-    automatico = "automatico"
+    automatic = "automatic"
     manual = "manual"
 
 class Status(str, enum.Enum):
-    available = "disponible"
-    reserved = "reservado"
-    sold = "vendido"
+    available = "available"
+    reserved = "reserved"
+    sold = "sold"
 
 class Vehicle(Base):
     __tablename__ = "vehicles"

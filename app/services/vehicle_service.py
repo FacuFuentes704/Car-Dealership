@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate, Fuel_Type, Status, Transmission
+from app.schemas.vehicle import VehicleCreate, VehicleUpdate, FuelType, Status, Transmission
 from app.models.vehicle import Vehicle
 from sqlalchemy.orm import Session
 
@@ -13,13 +13,12 @@ def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     db.refresh(new_vehicle)
     return new_vehicle
 
-def get_vehicles(db: Session, brand: str = None, model: str = None, year: int = None, km: int = None, price_min: int = None, price_max: int = None, fuel_type: Fuel_Type = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
+def get_vehicles(db: Session, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
     query = db.query(Vehicle)
     filtros = {
         Vehicle.brand: brand,
         Vehicle.model: model,
         Vehicle.year: year,
-        Vehicle.km: km,
         Vehicle.fuel_type: fuel_type,
         Vehicle.transmission: transmission,
         Vehicle.status: status,
@@ -41,6 +40,7 @@ def get_vehicles(db: Session, brand: str = None, model: str = None, year: int = 
             Vehicle.brand.ilike(f"%{search}%") |
             Vehicle.model.ilike(f"%{search}%")
         )
+    return query.all()
     
 def get_vehicles_by_id(db: Session, vehicle_id: int, ):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()

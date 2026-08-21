@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from app.models.vehicle import Fuel_Type, Status, Transmission
+from app.models.vehicle import FuelType, Status, Transmission
 from app.schemas.photo import PhotoResponse
 
 class VehicleCreate(BaseModel):
-    fuel_type: Optional[Fuel_Type] = Fuel_Type.gasolina
+    fuel_type: Optional[FuelType] = FuelType.gasoline
     status: Optional[Status] = Status.available
     transmission: Optional[Transmission] = Transmission.manual
     color: Optional[str] = None
@@ -24,7 +24,7 @@ class VehicleResponse(BaseModel):
     color: Optional[str] = None
     photos: list[PhotoResponse] = []
     brand: str
-    fuel_type: Fuel_Type
+    fuel_type: FuelType
     model: str
     year: int
     plate: Optional[str] = None
@@ -37,7 +37,7 @@ class VehicleResponse(BaseModel):
         from_attributes = True
 
 class VehicleUpdate(BaseModel):
-    fuel_type: Optional[Fuel_Type] = None
+    fuel_type: Optional[FuelType] = None
     status: Optional[Status] = None
     color: Optional[str] = None
     brand: Optional[str] = None

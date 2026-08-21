@@ -10,5 +10,6 @@ class Photo(Base):
     url = Column(String, nullable=False)
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False, index=True)
     is_main = Column(Boolean, default=False)
+    public_id = Column(String, nullable=False)
 
     vehicle = relationship("Vehicle", back_populates="photos")
