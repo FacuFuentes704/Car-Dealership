@@ -5,7 +5,6 @@ from datetime import datetime
 
 class SaleCreate(BaseModel):
     client_id: Optional[int] = None
-    employee_id: Optional[int] = None
     vehicle_id: int
     sale_price: int
     payment_method: Optional[PaymentMethod] = PaymentMethod.cash

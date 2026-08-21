@@ -1,14 +1,30 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.sale import Sale
-from app.schemas.sale import SaleCreate, SaleResponse, SaleUpdate
+from app.models.vehicle import Vehicle, Status
+from app.models.client import Client
+from app.schemas.sale import SaleCreate, SaleUpdate
+from app.models.client_vehicle_interest import ClientVehicleInterest
 
-def create_sale(db: Session, sale_data: SaleCreate):
-    new_sale = Sale(**sale_data.model_dump())
+def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
+    vehiculo = db.query(Vehicle).filter(Vehicle.id == sale_data.vehicle_id).first()
+    if not vehiculo:
+        raise HTTPException(status_code= 404, detail="Vehiculo no existente")
+    cliente = db.query(Client).filter(Client.id == sale_data.client_id).first()
+    if not cliente:
+        raise HTTPException(status_code= 404, detail="Cliente no existente")
+    if vehiculo.status is not Status.available:
+        raise HTTPException(status_code=400, detail="Vehiculo no disponible")
+    new_sale = Sale(**sale_data.model_dump(), employee_id = employee_id)
     db.add(new_sale)
+    vehiculo.status = Status.sold
+    resultado = db.query(ClientVehicleInterest).filter(ClientVehicleInterest.vehicle_id == sale_data.vehicle_id).all()
+    for interes in resultado:
+        db.delete(interes)
     db.commit()
     db.refresh(new_sale)
     return new_sale
+    
 
 def get_sales(db: Session):
     resultado = db.query(Sale).all()
