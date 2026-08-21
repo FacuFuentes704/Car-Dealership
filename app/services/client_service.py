@@ -73,3 +73,12 @@ def add_client_interest(db: Session, client_id: int, vehicle_id: int):
     db.commit()
     db.refresh(new_interest)
     return new_interest
+
+def delete_client_interests(db: Session, vehicle_id: int, client_id: int):
+    resultado = db.query(ClientVehicleInterest).filter(ClientVehicleInterest.vehicle_id == vehicle_id,
+                                                       ClientVehicleInterest.client_id == client_id).first()
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Interes no encontrado")
+    db.delete(resultado)
+    db.commit()
+    return

@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 from app.models.vehicle import FuelType, Status, Transmission
 from app.schemas.photo import PhotoResponse
+from app.schemas.Interests import VehicleInterestResponse
 
 class VehicleCreate(BaseModel):
     fuel_type: Optional[FuelType] = FuelType.gasoline
@@ -26,6 +27,7 @@ class VehicleResponse(BaseModel):
     brand: str
     fuel_type: FuelType
     model: str
+    interested_clients: list[VehicleInterestResponse] = []
     year: int
     plate: Optional[str] = None
     km: int

@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from app.models.client import ClientStatus
 from datetime import datetime
+from app.schemas.Interests import InterestResponse
 
 
 class ClientCreate(BaseModel):
@@ -14,12 +15,13 @@ class ClientCreate(BaseModel):
 
 class ClientResponse(BaseModel):
     id: int
-    name:str
+    name: str
     status: ClientStatus
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     notes: Optional[str] = None
     created_at: datetime
+    interests: list[InterestResponse] = []
 
     class Config:
         from_attributes = True
