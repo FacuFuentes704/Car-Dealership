@@ -38,6 +38,23 @@ class VehicleResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class VehiclePublicResponse(BaseModel):
+    id: int
+    status: Status
+    transmission: Transmission
+    color: Optional[str] = None
+    brand: str
+    fuel_type: FuelType
+    model: str
+    year: int
+    km: int
+    price: int
+    description: Optional[str] = None
+    photos: list[PhotoResponse] = []
+
+    class Config:
+        from_attributes = True
+
 class VehicleUpdate(BaseModel):
     fuel_type: Optional[FuelType] = None
     status: Optional[Status] = None
