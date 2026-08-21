@@ -24,7 +24,7 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
 
     id = Column(Integer, primary_key=True, index=True)
-    fuel_type = Column(Enum(Fuel_Type))
+    fuel_type = Column(Enum(FuelType))
     transmission = Column(Enum(Transmission))
     status = Column(Enum(Status), default=Status.available)
     color = Column(String(100))

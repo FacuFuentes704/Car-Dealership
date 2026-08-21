@@ -4,9 +4,10 @@ from app.models.vehicle import Vehicle
 from sqlalchemy.orm import Session
 
 def create_vehicle(db: Session, vehicle_data: VehicleCreate):
-    resultado = db.query(Vehicle).filter(Vehicle.plate == vehicle_data.plate).first()
-    if resultado:
-        raise HTTPException(status_code=400, detail="Patente duplicada")
+    if vehicle_data.plate:
+        resultado = db.query(Vehicle).filter(Vehicle.plate == vehicle_data.plate).first()
+        if resultado:
+            raise HTTPException(status_code=400, detail="Patente duplicada")
     new_vehicle = Vehicle(**vehicle_data.model_dump())
     db.add(new_vehicle)
     db.commit()

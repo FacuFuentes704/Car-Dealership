@@ -36,4 +36,4 @@ def create_interest(client_id: int, vehicle_id: int, db: Session = Depends(get_d
 
 @clients_router.delete("/{client_id}/interests/{vehicle_id}", status_code=204)
 def delete_interest(client_id: int, vehicle_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
-    return delete_client_interests(db, client_id, vehicle_id)
+    return delete_client_interests(db, vehicle_id, client_id)
