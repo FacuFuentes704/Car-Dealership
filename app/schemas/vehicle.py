@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from app.models.vehicle import FuelType, Status, Transmission
+from app.models.vehicle import FuelType, Status, Transmission, Condition
 from app.schemas.photo import PhotoResponse
 from app.schemas.Interests import VehicleInterestResponse
 
@@ -12,6 +12,7 @@ class VehicleCreate(BaseModel):
     color: Optional[str] = None
     brand: str
     model: str
+    condition: Optional[Condition] = Condition.used
     year: int
     plate: Optional[str] = None
     km: Optional[int] = 0
@@ -25,6 +26,7 @@ class VehicleResponse(BaseModel):
     color: Optional[str] = None
     photos: list[PhotoResponse] = []
     brand: str
+    condition: Condition
     fuel_type: FuelType
     model: str
     interested_clients: list[VehicleInterestResponse] = []
@@ -45,6 +47,7 @@ class VehiclePublicResponse(BaseModel):
     color: Optional[str] = None
     brand: str
     fuel_type: FuelType
+    condition: Condition
     model: str
     year: int
     km: int
@@ -62,6 +65,7 @@ class VehicleUpdate(BaseModel):
     brand: Optional[str] = None
     model: Optional[str] = None
     year: Optional[int] = None
+    condition: Optional[Condition] = None
     plate: Optional[str] = None
     km: Optional[int] = None
     price: Optional[int] = None
