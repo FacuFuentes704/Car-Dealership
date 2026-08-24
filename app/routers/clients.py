@@ -4,7 +4,6 @@ from app.auth.auth import get_current_user
 from app.services.client_service import get_client_by_id, get_clients, delete_client, create_client, update_client, add_client_interest, delete_client_interests
 from app.schemas.client import ClientCreate, ClientResponse, ClientStatus, ClientUpdate
 from app.models.user import User
-from app.models.client import ClientStatus
 from app.schemas.Interests import InterestResponse
 from sqlalchemy.orm import Session
 from typing import Optional
@@ -13,16 +12,16 @@ clients_router = APIRouter(prefix="/clients",
                            tags=["clients"])
 
 @clients_router.get("/", response_model=list[ClientResponse])
-def show_clients(status: Optional[str] = None, search: Optional[str] = None, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
-    return get_clients(db, status, search)
+def show_clients(status: Optional[str] = None, only_active: bool = False, search: Optional[str] = None, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
+    return get_clients(db, status, search, only_active)
 
 @clients_router.post("/", response_model=ClientResponse)
 def create(client_data: ClientCreate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
     return create_client(db, client_data)
 
 @clients_router.get("/{client_id}", response_model=ClientResponse)
-def show_by_id(client_id: int, db:Session = Depends(get_db), user_id: User = Depends(get_current_user)):
-    return get_client_by_id(db, client_id)
+def show_by_id(client_id: int, only_active:bool = False, db:Session = Depends(get_db), user_id: User = Depends(get_current_user)):
+    return get_client_by_id(db, client_id, only_active)
 
 @clients_router.patch("/{client_id}", response_model=ClientResponse)
 def update(client_id: int, client_data: ClientUpdate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):

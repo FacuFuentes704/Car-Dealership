@@ -19,6 +19,7 @@ class Client(Base):
     phone = Column(String(50))
     email = Column(String(200))
     notes = Column(String)
+    is_active = Column(Boolean, default= True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     interests = relationship("ClientVehicleInterest", back_populates="client")

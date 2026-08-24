@@ -15,7 +15,7 @@ def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     return new_vehicle
 
 def get_vehicles(db: Session, page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
-    query = db.query(Vehicle)
+    query = db.query(Vehicle).filter(Vehicle.is_active == True)   
     filtros = {
         Vehicle.brand: brand,
         Vehicle.model: model,
@@ -65,6 +65,6 @@ def delete_vehicle(db: Session, vehicle_id: int):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail= "Vehiculo no encontrado")
-    db.delete(resultado)
+    resultado.is_active = False
     db.commit()
     return

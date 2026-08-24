@@ -17,6 +17,7 @@ class ClientResponse(BaseModel):
     id: int
     name: str
     status: ClientStatus
+    is_active: bool
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     notes: Optional[str] = None
@@ -30,5 +31,6 @@ class ClientUpdate(BaseModel):
     name: Optional[str] = None
     status: Optional[ClientStatus] = None
     email: Optional[EmailStr] = None
+    is_active: Optional [bool] = None
     notes: Optional[str] = None
     phone: Optional[str] = None
