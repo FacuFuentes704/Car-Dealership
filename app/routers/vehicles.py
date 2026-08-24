@@ -4,10 +4,11 @@ from app.services.photo_service import upload_photo, update_photo, delete_photos
 from typing import Optional
 from sqlalchemy.orm import Session
 from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate, VehiclePublicResponse
-from app.services.vehicle_service import create_vehicle, update_vehicle, delete_vehicle, get_vehicles, get_vehicles_by_id
+from app.services.vehicle_service import create_vehicle, update_vehicle, delete_vehicle, get_vehicles, get_vehicles_by_id, get_vehicle_dashboard
 from app.auth.auth import get_current_user
 from app.models.user import User
 from app.database import get_db
+from app.schemas.VehicleDashboard import VehicleDashboardResponse
 
 vehicles_router = APIRouter(prefix="/vehicles",
                             tags=["vehicles"])
@@ -53,6 +54,10 @@ def show_vehicles_adms(
     search: Optional[str] = None
 ):
     return get_vehicles(db, only_active, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
+
+@vehicles_router.get("/dashboard", response_model=VehicleDashboardResponse)
+def show_dashboard(db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    return get_vehicle_dashboard(db)
 
 @vehicles_router.patch("/{vehicle_id}", response_model=VehicleResponse)
 def update(vehicle_id: int, vehicle_data: VehicleUpdate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
