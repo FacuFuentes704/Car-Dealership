@@ -26,6 +26,7 @@ class VehicleResponse(BaseModel):
     color: Optional[str] = None
     photos: list[PhotoResponse] = []
     brand: str
+    is_active: bool
     condition: Condition
     fuel_type: FuelType
     model: str
@@ -67,6 +68,7 @@ class VehicleUpdate(BaseModel):
     year: Optional[int] = None
     condition: Optional[Condition] = None
     plate: Optional[str] = None
+    is_active: Optional[bool] = None
     km: Optional[int] = None
     price: Optional[int] = None
     description: Optional[str] = None

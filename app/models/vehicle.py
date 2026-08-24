@@ -40,6 +40,7 @@ class Vehicle(Base):
     price = Column(Integer, nullable=False)
     description = Column(String)
     condition = Column(Enum(Condition), default=Condition.used)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     interested_clients = relationship("ClientVehicleInterest", back_populates="vehicle")

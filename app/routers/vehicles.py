@@ -32,7 +32,7 @@ def show_vehicles(
     km_max: Optional[int] = None,
     search: Optional[str] = None
 ):
-    return get_vehicles(db, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
+    return get_vehicles(db, True, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
 
 @vehicles_router.get("/admin", response_model=list[VehicleResponse])
 def show_vehicles_adms(
@@ -41,6 +41,7 @@ def show_vehicles_adms(
     limit: int = 20,
     user_data: User = Depends(get_current_user),
     brand: Optional[str] = None,
+    only_active: bool = False,
     model: Optional[str] = None,
     year: Optional[int] = None,
     price_min: Optional[int] = None,
@@ -51,7 +52,7 @@ def show_vehicles_adms(
     km_max: Optional[int] = None,
     search: Optional[str] = None
 ):
-    return get_vehicles(db, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
+    return get_vehicles(db, only_active, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
 
 @vehicles_router.patch("/{vehicle_id}", response_model=VehicleResponse)
 def update(vehicle_id: int, vehicle_data: VehicleUpdate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
@@ -76,11 +77,11 @@ def up_photo(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user
 
 @vehicles_router.get("/{vehicle_id}", response_model=VehiclePublicResponse)
 def show_by_id(vehicle_id: int, db: Session = Depends(get_db)):
-    return get_vehicles_by_id(db, vehicle_id)
+    return get_vehicles_by_id(db, vehicle_id, True)
 
 @vehicles_router.get("/{vehicle_id}/admin", response_model=VehicleResponse)
-def show_by_id_adm(vehicle_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
-    return get_vehicles_by_id(db, vehicle_id)
+def show_by_id_adm(vehicle_id: int, only_active: bool = False, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    return get_vehicles_by_id(db, vehicle_id, only_active)
 
 @vehicles_router.delete("/{vehicle_id}/photos/{photo_id}", status_code=204)
 def delete_foto(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):

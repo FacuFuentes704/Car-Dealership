@@ -1,10 +1,9 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app.models.client import Client, ClientStatus
+from app.models.client import Client
 from app.models.client_vehicle_interest import ClientVehicleInterest
-from app.schemas.client import ClientStatus, ClientCreate, ClientResponse, ClientUpdate
+from app.schemas.client import ClientStatus, ClientCreate, ClientUpdate
 from app.models.vehicle import Vehicle
-from app.models.client_vehicle_interest import ClientVehicleInterest
 
 def create_client(db: Session, client_data: ClientCreate):
     resultado = db.query(Client).filter(client_data.phone == Client.phone).first()
@@ -26,8 +25,10 @@ def create_client(db: Session, client_data: ClientCreate):
     db.refresh(new_client)
     return new_client
 
-def get_clients(db: Session, status: ClientStatus = None, search: str = None):
+def get_clients(db: Session, status: ClientStatus = None, search: str = None, only_active: bool = True):
     query = db.query(Client)
+    if only_active:
+        query = query.filter(Client.is_active == True)
     if status:
         query = query.filter(Client.status == status)
     if search:
@@ -38,10 +39,13 @@ def get_clients(db: Session, status: ClientStatus = None, search: str = None):
         )
     return query.all()
 
-def get_client_by_id(db: Session, client_id: int):
+def get_client_by_id(db: Session, client_id: int, only_active: bool = True):
     resultado = db.query(Client).filter(Client.id == client_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    if only_active:
+        if resultado.is_active == False:
+            raise HTTPException(status_code=400, detail="Cliente inactivo")
     return resultado
 
 def update_client(db: Session, client_data: ClientUpdate, client_id:int):
@@ -59,7 +63,7 @@ def delete_client(db: Session, client_id: int):
     resultado = db.query(Client).filter(Client.id == client_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    db.delete(resultado)
+    resultado.is_active = False
     db.commit()
     return
 
