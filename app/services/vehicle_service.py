@@ -2,6 +2,8 @@ from fastapi import HTTPException
 from app.schemas.vehicle import VehicleCreate, VehicleUpdate, FuelType, Status, Transmission
 from app.models.vehicle import Vehicle
 from sqlalchemy.orm import Session
+from app.models.sale import Sale
+from datetime import datetime
 
 def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     if vehicle_data.plate:
@@ -68,3 +70,14 @@ def delete_vehicle(db: Session, vehicle_id: int):
     resultado.is_active = False
     db.commit()
     return
+
+def get_vehicle_dashboard(db: Session):
+    hoy = datetime.utcnow()
+    primer_dia_mes = datetime(hoy.year, hoy.month, 1)
+    disponibles = db.query(Vehicle).filter(Vehicle.status == Status.available).count()
+    reservados = db.query(Vehicle).filter(Vehicle.status == Status.reserved).count()
+    vendidos_mes = db.query(Sale).filter(Sale.created_at >= primer_dia_mes).count()
+    resultado = {"disponibles": disponibles,
+                 "reservados": reservados,
+                 "vendidos_mes": vendidos_mes}
+    return resultado
