@@ -8,7 +8,7 @@ from app.services.vehicle_service import create_vehicle, update_vehicle, delete_
 from app.auth.auth import get_current_user
 from app.models.user import User
 from app.database import get_db
-from app.schemas.VehicleDashboard import VehicleDashboardResponse
+from app.schemas.vehicle_dashboard import VehicleDashboardResponse
 
 vehicles_router = APIRouter(prefix="/vehicles",
                             tags=["vehicles"])
