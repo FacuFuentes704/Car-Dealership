@@ -1,12 +1,13 @@
 from fastapi import Depends, APIRouter
 from app.database import get_db
 from app.auth.auth import get_current_user
-from app.services.client_service import get_client_by_id, get_clients, delete_client, create_client, update_client, add_client_interest, delete_client_interests
+from app.services.client_service import get_client_by_id, get_clients, delete_client, create_client, update_client, add_client_interest, delete_client_interests, get_client_dashboard
 from app.schemas.client import ClientCreate, ClientResponse, ClientStatus, ClientUpdate
 from app.models.user import User
 from app.schemas.Interests import InterestResponse
 from sqlalchemy.orm import Session
 from typing import Optional
+from app.schemas.client_dashboard import ClientDashboardResponse
 
 clients_router = APIRouter(prefix="/clients",
                            tags=["clients"])
@@ -14,6 +15,10 @@ clients_router = APIRouter(prefix="/clients",
 @clients_router.get("/", response_model=list[ClientResponse])
 def show_clients(status: Optional[str] = None, only_active: bool = False, search: Optional[str] = None, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
     return get_clients(db, status, search, only_active)
+
+@clients_router.get("/dashboard", response_model=ClientDashboardResponse)
+def show_client_dashboard(db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    return get_client_dashboard(db)
 
 @clients_router.post("/", response_model=ClientResponse)
 def create(client_data: ClientCreate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):

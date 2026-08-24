@@ -4,6 +4,7 @@ from app.models.client import Client
 from app.models.client_vehicle_interest import ClientVehicleInterest
 from app.schemas.client import ClientStatus, ClientCreate, ClientUpdate
 from app.models.vehicle import Vehicle
+from datetime import datetime
 
 def create_client(db: Session, client_data: ClientCreate):
     resultado = db.query(Client).filter(client_data.phone == Client.phone).first()
@@ -94,3 +95,14 @@ def delete_client_interests(db: Session, vehicle_id: int, client_id: int):
     db.delete(resultado)
     db.commit()
     return
+
+def get_client_dashboard(db: Session):
+    negotiating = db.query(Client).filter(Client.status == ClientStatus.negotiating).count()
+    closed = db.query(Client).filter(Client.status == ClientStatus.closed).count()
+    waiting = db.query(Client).filter(Client.status == ClientStatus.waiting).count()
+    lost = db.query(Client).filter(Client.status == ClientStatus.lost).count()
+    resultado = {"negotiating": negotiating,
+                 "closed": closed,
+                 "waiting": waiting,
+                 "lost": lost}
+    return resultado
