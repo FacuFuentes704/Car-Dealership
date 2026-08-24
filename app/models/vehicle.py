@@ -20,6 +20,10 @@ class Status(str, enum.Enum):
     reserved = "reserved"
     sold = "sold"
 
+class Condition(str, enum.Enum):
+    new = "new"
+    used = "used"
+
 class Vehicle(Base):
     __tablename__ = "vehicles"
 
@@ -35,6 +39,7 @@ class Vehicle(Base):
     km = Column(Integer)
     price = Column(Integer, nullable=False)
     description = Column(String)
+    condition = Column(Enum(Condition), default=Condition.used)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     interested_clients = relationship("ClientVehicleInterest", back_populates="vehicle")
