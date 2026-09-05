@@ -45,6 +45,15 @@ def usuario_de_prueba(db):
     db.commit()
     return usuario
 
+@pytest.fixture
+def usuario_inactivo(db):
+    hashed = hash_password("password123")
+    usuario = User(name="Test Inactivo", email="test2@test.com", password = hashed, is_active = False)
+    db.add(usuario)
+    db.commit()
+    return usuario
+
+
 @pytest.fixture()
 def token_usuario(client, usuario_de_prueba):
     response = client.post("/auth/login", json={
