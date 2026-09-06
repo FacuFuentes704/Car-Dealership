@@ -58,3 +58,19 @@ def test_registrar_email_duplicado(client, usuario_de_prueba, token_usuario):
     )
     assert response.status_code == 400
     assert response.json()["detail"] == "Email duplicado"
+
+def test_get_perfil_sin_token(client):
+    response = client.get("/users/me")
+    assert response.status_code == 401
+
+def test_delete_perfil(client, token_usuario):
+    response = client.delete(
+        "/users/me",
+        headers={"Authorization": f"Bearer {token_usuario}"}
+    )
+    assert response.status_code == 204
+    login_response = client.post("/auth/login", json={
+        "email": "test@test.com",
+        "password": "password123"
+    })
+    assert login_response.status_code == 403

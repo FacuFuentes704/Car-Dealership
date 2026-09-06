@@ -6,6 +6,7 @@ from app.database import Base, get_db
 from main import app
 from app.auth.auth import hash_password
 from app.models.user import User
+from app.models.vehicle import Vehicle
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
@@ -61,3 +62,43 @@ def token_usuario(client, usuario_de_prueba):
         "password": "password123"
     })
     return response.json()["access_token"]
+
+@pytest.fixture()
+def vehiculo_creado(db):
+    vehiculo = Vehicle(fuel_type ="gasoline", 
+                       transmission = "manual", 
+                       status = "available", 
+                       color = "negro", 
+                       brand = "Toyota", 
+                       model = "Corolla", 
+                       year = 2026, 
+                       plate = "AI 111 111", 
+                       km = 1000, 
+                       price = 40000000, 
+                       description = "descripcion de prueba", 
+                       condition = "used", 
+                       is_active = True)
+    db.add(vehiculo)
+    db.commit()
+    return vehiculo
+
+@pytest.fixture()
+def vehiculo_inactivo(db):
+    vehiculo = Vehicle(
+        fuel_type="diesel",
+        transmission="automatic",
+        status="available",
+        color="blanco",
+        brand="Ford",
+        model="Ranger",
+        year=2020,
+        plate="AB123CD",
+        km=50000,
+        price=22000000,
+        description="vehiculo inactivo de prueba",
+        condition="used",
+        is_active=False
+    )
+    db.add(vehiculo)
+    db.commit()
+    return vehiculo

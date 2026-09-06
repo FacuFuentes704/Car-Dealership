@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from app.schemas.vehicle import VehicleCreate, VehicleUpdate, FuelType, Status, Transmission
 from app.models.vehicle import Vehicle
-from sqlalchemy.orm import Session
 from app.models.sale import Sale
+from sqlalchemy.orm import Session
 from datetime import datetime
 
 def create_vehicle(db: Session, vehicle_data: VehicleCreate):
@@ -16,8 +16,10 @@ def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     db.refresh(new_vehicle)
     return new_vehicle
 
-def get_vehicles(db: Session, page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
-    query = db.query(Vehicle).filter(Vehicle.is_active == True)   
+def get_vehicles(db: Session, only_active: bool = True, page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
+    query = db.query(Vehicle)
+    if only_active:
+        query = query.filter(Vehicle.is_active == True)
     filtros = {
         Vehicle.brand: brand,
         Vehicle.model: model,
@@ -31,13 +33,10 @@ def get_vehicles(db: Session, page: int = 1, limit: int = 20, brand: str = None,
             query = query.filter(campo == valor)
     if price_min:
         query = query.filter(Vehicle.price >= price_min)
-
     if price_max:
         query = query.filter(Vehicle.price <= price_max)
-
     if km_max:
         query = query.filter(Vehicle.km <= km_max)
-
     if search:
         query = query.filter(
             Vehicle.brand.ilike(f"%{search}%") |
@@ -45,20 +44,23 @@ def get_vehicles(db: Session, page: int = 1, limit: int = 20, brand: str = None,
         )
     query = query.offset((page - 1) * limit).limit(limit)
     return query.all()
-    
-def get_vehicles_by_id(db: Session, vehicle_id: int, ):
+
+def get_vehicles_by_id(db: Session, vehicle_id: int, only_active: bool = True):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
+    if only_active:
+        if resultado.is_active == False:
+            raise HTTPException(status_code=400, detail="Vehiculo inactivo")
     return resultado
 
-def update_vehicle(db: Session, vehicle_data: VehicleUpdate, vehicle_id:int):
+def update_vehicle(db: Session, vehicle_data: VehicleUpdate, vehicle_id: int):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
     datos = vehicle_data.model_dump(exclude_unset=True)
     for campo, valor in datos.items():
-        setattr (resultado, campo, valor)
+        setattr(resultado, campo, valor)
     db.commit()
     db.refresh(resultado)
     return resultado
@@ -66,7 +68,7 @@ def update_vehicle(db: Session, vehicle_data: VehicleUpdate, vehicle_id:int):
 def delete_vehicle(db: Session, vehicle_id: int):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not resultado:
-        raise HTTPException(status_code=404, detail= "Vehiculo no encontrado")
+        raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
     resultado.is_active = False
     db.commit()
     return
@@ -77,7 +79,8 @@ def get_vehicle_dashboard(db: Session):
     disponibles = db.query(Vehicle).filter(Vehicle.status == Status.available).count()
     reservados = db.query(Vehicle).filter(Vehicle.status == Status.reserved).count()
     vendidos_mes = db.query(Sale).filter(Sale.created_at >= primer_dia_mes).count()
-    resultado = {"disponibles": disponibles,
-                 "reservados": reservados,
-                 "vendidos_mes": vendidos_mes}
-    return resultado
+    return {
+        "disponibles": disponibles,
+        "reservados": reservados,
+        "vendidos_mes": vendidos_mes
+    }
