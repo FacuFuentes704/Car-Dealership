@@ -3,11 +3,12 @@ def test_get_client_sin_token(client, cliente_creado):
     assert response.status_code == 401
 
 def test_delete_client(client, token_usuario, cliente_creado):
-    response = client.delete(f"/clients/{cliente_creado.id}",
+    cliente = cliente_creado.id
+    response = client.delete(f"/clients/{cliente}",
                              headers= {"Authorization": f"Bearer {token_usuario}"})
     assert response.status_code == 204
 
-    response2 = client.get(f"/clients/{cliente_creado.id}",
+    response2 = client.get(f"/clients/{cliente}",
                            headers={"Authorization": f"Bearer {token_usuario}"})
     assert response2.status_code == 200
     assert response2.json()["is_active"] == False
@@ -35,7 +36,9 @@ def test_crear_interes_con_token(client, token_usuario, cliente_creado, vehiculo
     assert response.status_code == 200
 
 def test_delete_interes(client, client_interest, vehiculo_creado, cliente_creado, token_usuario):
-    response = client.delete(f"/clients/{cliente_creado.id}/interests/{vehiculo_creado.id}",
+    cliente = cliente_creado.id
+    vehiculo = vehiculo_creado.id
+    response = client.delete(f"/clients/{cliente}/interests/{vehiculo}",
                              headers={"Authorization": f"Bearer {token_usuario}"})
     assert response.status_code == 204
 
@@ -49,4 +52,3 @@ def test_get_client_interests(client, token_usuario, client_interest, cliente_cr
 def test_crear_interes_sin_token(client, cliente_creado, vehiculo_creado):
     response = client.post(f"/clients/{cliente_creado.id}/interests/{vehiculo_creado.id}")
     assert response.status_code == 401
-

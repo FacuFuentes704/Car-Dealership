@@ -6,9 +6,10 @@ from app.database import Base, get_db
 from main import app
 from app.auth.auth import hash_password
 from app.models.user import User
-from app.models.vehicle import Vehicle
+from app.models.vehicle import Vehicle, Status
 from app.models.client import Client, ClientStatus
 from app.models.client_vehicle_interest import ClientVehicleInterest
+from app.models.sale import Sale, PaymentMethod
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
@@ -17,7 +18,10 @@ engine = create_engine(
     connect_args={"check_same_thread": False}
 )
 
-TestingSessionLocal = sessionmaker(autocommit = False, autoflush= False, bind= engine)
+TestingSessionLocal = sessionmaker(autocommit = False, 
+                                   autoflush= False, 
+                                   bind= engine,
+                                   expire_on_commit= False)
 
 @pytest.fixture()
 def db():
@@ -69,7 +73,7 @@ def token_usuario(client, usuario_de_prueba):
 def vehiculo_creado(db):
     vehiculo = Vehicle(fuel_type ="gasoline", 
                        transmission = "manual", 
-                       status = "available", 
+                       status = Status.available, 
                        color = "negro", 
                        brand = "Toyota", 
                        model = "Corolla", 
@@ -110,7 +114,7 @@ def cliente_creado(db):
     cliente = Client(name = "Test", 
                      status = ClientStatus.negotiating, 
                      phone = "12313", 
-                     email = "test@test.com", 
+                     email = "test_cliente@test.com", 
                      notes= "abc", 
                      is_active = True)
     db.add(cliente)
@@ -123,3 +127,35 @@ def client_interest(db, vehiculo_creado, cliente_creado):
     db.add(interes)
     db.commit()
     return interes
+
+@pytest.fixture()
+def venta_creada(db, cliente_creado, vehiculo_creado, usuario_de_prueba):
+    venta = Sale(vehicle_id = vehiculo_creado.id, 
+                 client_id = cliente_creado.id, 
+                 employee_id = usuario_de_prueba.id, 
+                 sale_price = 2000, 
+                 payment_method = PaymentMethod.cash)
+    db.add(venta)
+    db.commit()
+    return venta
+
+@pytest.fixture()
+def vehiculo_no_disponible(db):
+    vehiculo = Vehicle(
+        fuel_type="diesel",
+        transmission="automatic",
+        status= Status.sold,
+        color="blanco",
+        brand="Ford",
+        model="Ranger",
+        year=2020,
+        plate="AB123CD",
+        km=50000,
+        price=22000000,
+        description="vehiculo inactivo de prueba",
+        condition="used",
+        is_active=True
+    )
+    db.add(vehiculo)
+    db.commit()
+    return vehiculo

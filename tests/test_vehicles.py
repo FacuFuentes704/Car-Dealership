@@ -71,3 +71,4 @@ def test_admin_ve_inactivos(client, vehiculo_creado, vehiculo_inactivo, token_us
 
     assert "Toyota" in marcas
     assert "Ford" in marcas
+
