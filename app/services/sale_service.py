@@ -13,7 +13,11 @@ def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
     cliente = db.query(Client).filter(Client.id == sale_data.client_id).first()
     if not cliente:
         raise HTTPException(status_code= 404, detail="Cliente no existente")
-    if vehiculo.status is not Status.available:
+    if cliente.is_active is False:
+        raise HTTPException(status_code= 400, detail="Cliente inactivo")
+    if vehiculo.is_active is False:
+        raise HTTPException(status_code= 400, detail= "Vehiculo inactivo")
+    if vehiculo.status != Status.available:
         raise HTTPException(status_code=400, detail="Vehiculo no disponible")
     new_sale = Sale(**sale_data.model_dump(), employee_id = employee_id)
     db.add(new_sale)
@@ -25,7 +29,6 @@ def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
     db.refresh(new_sale)
     return new_sale
     
-
 def get_sales(db: Session):
     resultado = db.query(Sale).all()
     return resultado
