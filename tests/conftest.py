@@ -7,6 +7,8 @@ from main import app
 from app.auth.auth import hash_password
 from app.models.user import User
 from app.models.vehicle import Vehicle
+from app.models.client import Client, ClientStatus
+from app.models.client_vehicle_interest import ClientVehicleInterest
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
@@ -77,7 +79,7 @@ def vehiculo_creado(db):
                        price = 40000000, 
                        description = "descripcion de prueba", 
                        condition = "used", 
-                       is_active = True)
+                       is_active = True)    
     db.add(vehiculo)
     db.commit()
     return vehiculo
@@ -102,3 +104,22 @@ def vehiculo_inactivo(db):
     db.add(vehiculo)
     db.commit()
     return vehiculo
+
+@pytest.fixture()
+def cliente_creado(db):
+    cliente = Client(name = "Test", 
+                     status = ClientStatus.negotiating, 
+                     phone = "12313", 
+                     email = "test@test.com", 
+                     notes= "abc", 
+                     is_active = True)
+    db.add(cliente)
+    db.commit()
+    return cliente
+
+@pytest.fixture()
+def client_interest(db, vehiculo_creado, cliente_creado):
+    interes = ClientVehicleInterest(client_id = cliente_creado.id, vehicle_id = vehiculo_creado.id)
+    db.add(interes)
+    db.commit()
+    return interes
