@@ -7,8 +7,14 @@ from fastapi import HTTPException
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("FALTA LA VARIABLE SECRET KEY")
 ALGORITHM = os.getenv("ALGORITHM")
+if not ALGORITHM:
+    raise RuntimeError("FALTA LA VARIABLE ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+if not ACCESS_TOKEN_EXPIRE_MINUTES:
+    raise RuntimeError("FALTA LA VARIABLE ACCESS_TOKEN_EXPIRE_MINUTES")
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
