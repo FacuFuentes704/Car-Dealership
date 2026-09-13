@@ -10,6 +10,7 @@ class VehicleCreate(BaseModel):
     status: Optional[Status] = Status.available
     transmission: Optional[Transmission] = Transmission.manual
     color: Optional[str] = None
+    is_offer: bool
     brand: str
     model: str
     condition: Optional[Condition] = Condition.used
@@ -27,6 +28,7 @@ class VehicleResponse(BaseModel):
     photos: list[PhotoResponse] = []
     brand: str
     is_active: bool
+    is_offer: bool
     condition: Condition
     fuel_type: FuelType
     model: str
@@ -48,6 +50,7 @@ class VehiclePublicResponse(BaseModel):
     color: Optional[str] = None
     brand: str
     fuel_type: FuelType
+    is_offer:bool
     condition: Condition
     model: str
     year: int
@@ -64,6 +67,7 @@ class VehicleUpdate(BaseModel):
     status: Optional[Status] = None
     color: Optional[str] = None
     brand: Optional[str] = None
+    is_offer: bool
     model: Optional[str] = None
     year: Optional[int] = None
     condition: Optional[Condition] = None
