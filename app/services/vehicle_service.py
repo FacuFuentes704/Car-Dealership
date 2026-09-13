@@ -27,6 +27,7 @@ def get_vehicles(db: Session, only_active: bool = True, condition: Condition = N
         Vehicle.fuel_type: fuel_type,
         Vehicle.transmission: transmission,
         Vehicle.status: status,
+        Vehicle.condition: condition
     }
     for campo, valor in filtros.items():
         if valor:
