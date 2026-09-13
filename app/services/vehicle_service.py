@@ -31,7 +31,7 @@ def get_vehicles(db: Session, only_active: bool = True, is_offer: bool = None, c
         Vehicle.is_offer: is_offer
     }
     for campo, valor in filtros.items():
-        if valor:
+        if valor is not None:
             query = query.filter(campo == valor)
     if price_min:
         query = query.filter(Vehicle.price >= price_min)
