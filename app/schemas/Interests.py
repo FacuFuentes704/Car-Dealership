@@ -25,7 +25,7 @@ class ClientSummary(BaseModel):
 class InterestResponse(BaseModel):
     id: int
     created_at: datetime
-    vehicle: VehicleSummary  # para cuando lo ves desde el cliente
+    vehicle: VehicleSummary
 
     class Config:
         from_attributes = True
@@ -33,7 +33,7 @@ class InterestResponse(BaseModel):
 class VehicleInterestResponse(BaseModel):
     id: int
     created_at: datetime
-    client: ClientSummary  # para cuando lo ves desde el vehículo
+    client: ClientSummary
 
     class Config:
         from_attributes = True

@@ -35,6 +35,7 @@ class Vehicle(Base):
     brand = Column(String(200), nullable=False)
     model = Column(String(150), nullable=False)
     year = Column(Integer, nullable=False)
+    is_offer = Column(Boolean, default=False)
     plate = Column(String(100))
     km = Column(Integer)
     price = Column(Integer, nullable=False)

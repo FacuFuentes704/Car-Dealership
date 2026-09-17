@@ -69,9 +69,11 @@ def delete(vehicle_id: int, db: Session = Depends(get_db), user_id: User = Depen
 
 @vehicles_router.post("/{vehicle_id}/photos", response_model=list[PhotoResponse])
 def photos(vehicle_id: int, db: Session = Depends(get_db), photos: list[UploadFile] = File(), user_id: User = Depends(get_current_user)):
+    ya_tiene_fotos = db.query(Photo).filter(Photo.vehicle_id == vehicle_id).first() is not None
+
     fotos_subidas = []
     for i, photo in enumerate(photos):
-        is_main = i == 0
+        is_main = (not ya_tiene_fotos) and (i == 0)
         foto_subida = upload_photo(db, vehicle_id, is_main, photo)
         fotos_subidas.append(foto_subida)
     return fotos_subidas
