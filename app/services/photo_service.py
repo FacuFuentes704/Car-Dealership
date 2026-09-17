@@ -46,3 +46,6 @@ def delete_photos(db: Session, photo_id: int):
     db.delete(resultado)
     db.commit()
     return
+
+def vehicle_tiene_fotos(db: Session, vehicle_id: int) -> bool:
+    return db.query(Photo).filter(Photo.vehicle_id == vehicle_id).first() is not None

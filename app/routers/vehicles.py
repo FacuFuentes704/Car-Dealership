@@ -1,6 +1,6 @@
 from fastapi import Depends, APIRouter, File, UploadFile
 from app.schemas.photo import PhotoResponse
-from app.services.photo_service import upload_photo, update_photo, delete_photos
+from app.services.photo_service import upload_photo, update_photo, delete_photos, vehicle_tiene_fotos
 from typing import Optional
 from sqlalchemy.orm import Session
 from app.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate, VehiclePublicResponse
@@ -8,6 +8,7 @@ from app.services.vehicle_service import create_vehicle, update_vehicle, delete_
 from app.auth.auth import get_current_user
 from app.models.user import User
 from app.database import get_db
+from app.models.photo import Photo
 from app.schemas.vehicle_dashboard import VehicleDashboardResponse
 
 vehicles_router = APIRouter(prefix="/vehicles",
@@ -73,7 +74,7 @@ def delete(vehicle_id: int, db: Session = Depends(get_db), user_id: User = Depen
 
 @vehicles_router.post("/{vehicle_id}/photos", response_model=list[PhotoResponse])
 def photos(vehicle_id: int, db: Session = Depends(get_db), photos: list[UploadFile] = File(), user_id: User = Depends(get_current_user)):
-    ya_tiene_fotos = db.query(Photo).filter(Photo.vehicle_id == vehicle_id).first() is not None
+    ya_tiene_fotos = vehicle_tiene_fotos(db, vehicle_id)
 
     fotos_subidas = []
     for i, photo in enumerate(photos):
