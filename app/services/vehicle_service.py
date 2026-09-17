@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.schemas.vehicle import VehicleCreate, VehicleUpdate, FuelType, Status, Transmission
+from app.schemas.vehicle import VehicleCreate, VehicleUpdate, FuelType, Status, Transmission, Condition
 from app.models.vehicle import Vehicle
 from app.models.sale import Sale
 from sqlalchemy.orm import Session
@@ -16,7 +16,7 @@ def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     db.refresh(new_vehicle)
     return new_vehicle
 
-def get_vehicles(db: Session, only_active: bool = True, page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
+def get_vehicles(db: Session, only_active: bool = True, is_offer: bool = None, condition: Condition = None,  page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
     query = db.query(Vehicle)
     if only_active:
         query = query.filter(Vehicle.is_active == True)
@@ -27,9 +27,11 @@ def get_vehicles(db: Session, only_active: bool = True, page: int = 1, limit: in
         Vehicle.fuel_type: fuel_type,
         Vehicle.transmission: transmission,
         Vehicle.status: status,
+        Vehicle.condition: condition,
+        Vehicle.is_offer: is_offer
     }
     for campo, valor in filtros.items():
-        if valor:
+        if valor is not None:
             query = query.filter(campo == valor)
     if price_min:
         query = query.filter(Vehicle.price >= price_min)

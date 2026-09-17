@@ -32,6 +32,7 @@ class Vehicle(Base):
     transmission = Column(Enum(Transmission))
     status = Column(Enum(Status), default=Status.available)
     color = Column(String(100))
+    is_offer = Column(Boolean, default=False)
     brand = Column(String(200), nullable=False)
     model = Column(String(150), nullable=False)
     year = Column(Integer, nullable=False)

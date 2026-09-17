@@ -25,15 +25,17 @@ def show_vehicles(
     brand: Optional[str] = None,
     model: Optional[str] = None,
     year: Optional[int] = None,
+    is_offer: Optional[bool] = None,
     price_min: Optional[int] = None,
     price_max: Optional[int] = None,
+    condition: Optional[str] = None,
     fuel_type: Optional[str] = None,
     transmission: Optional[str] = None,
     status: Optional[str] = None,
     km_max: Optional[int] = None,
     search: Optional[str] = None
 ):
-    return get_vehicles(db, True, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
+    return get_vehicles(db, True, is_offer, condition, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
 
 @vehicles_router.get("/admin", response_model=list[VehicleResponse])
 def show_vehicles_adms(
@@ -42,9 +44,11 @@ def show_vehicles_adms(
     limit: int = 20,
     user_data: User = Depends(get_current_user),
     brand: Optional[str] = None,
+    is_offer: Optional[bool] = None,
     only_active: bool = False,
     model: Optional[str] = None,
     year: Optional[int] = None,
+    condition: Optional[str] = None,
     price_min: Optional[int] = None,
     price_max: Optional[int] = None,
     fuel_type: Optional[str] = None,
@@ -53,7 +57,7 @@ def show_vehicles_adms(
     km_max: Optional[int] = None,
     search: Optional[str] = None
 ):
-    return get_vehicles(db, only_active, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
+    return get_vehicles(db, only_active, is_offer, condition, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
 
 @vehicles_router.get("/dashboard", response_model=VehicleDashboardResponse)
 def show_dashboard(db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
