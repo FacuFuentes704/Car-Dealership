@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from app.models.sale import PaymentMethod
 from typing import Optional
 from datetime import datetime
+from app.schemas.Interests import VehicleSummary, ClientSummary
 
 class SaleCreate(BaseModel):
     client_id: Optional[int] = None
@@ -13,9 +14,9 @@ class SaleCreate(BaseModel):
 
 class SaleResponse(BaseModel):
     id: int
-    client_id: int
+    client: ClientSummary
     employee_id: Optional[int] = None
-    vehicle_id: int
+    vehicle: VehicleSummary
     sale_price: int
     payment_method: Optional[PaymentMethod] = None
     sale_date: Optional[datetime] = None

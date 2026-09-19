@@ -2,6 +2,7 @@ from app.database import Base
 from sqlalchemy import String, Integer, Column, ForeignKey, Enum, DateTime
 import enum
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 class PaymentMethod(str, enum.Enum):
     cash = "cash"
@@ -23,3 +24,6 @@ class Sale(Base):
     sale_date = Column(DateTime)
     notes = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    client = relationship("Client")
+    vehicle = relationship("Vehicle")
