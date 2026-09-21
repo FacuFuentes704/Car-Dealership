@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import String, Integer, Column, ForeignKey, Enum, DateTime
+from sqlalchemy import String, Integer, Column, ForeignKey, Enum, DateTime, Boolean
 import enum
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -24,7 +24,8 @@ class Sale(Base):
     reserva_amount = Column(Integer, nullable=True)
     entrega_amount = Column(Integer, nullable=True)
     otros_amount = Column(Integer, nullable=True)
-    saldo_financiado = Column(Integer, nullable=True) 
+    saldo_financiado = Column(Integer, nullable=True)
+    boleto_generado = Column(Boolean, default=False)
     cantidad_cuotas = Column(Integer, nullable=True)
     monto_cuota = Column(Integer, nullable=True)
     fecha_primera_cuota = Column(DateTime, nullable=True)

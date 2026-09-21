@@ -37,6 +37,7 @@ class SaleResponse(BaseModel):
     payment_method: Optional[PaymentMethod] = None
     sale_date: Optional[datetime] = None
     notes: Optional[str] = None
+    boleto_generado: Optional[bool] = None
     reserva_amount: Optional[int] = None
     entrega_amount: Optional[int] = None
     otros_amount: Optional[int] = None
@@ -57,6 +58,7 @@ class SaleUpdate(BaseModel):
     sale_price: Optional[int] = None
     payment_method: Optional[PaymentMethod] = None
     sale_date: Optional[datetime] = None
+    boleto_generado: Optional[bool] = None
     notes: Optional[str] = None
 
 class SaleSummary(BaseModel):
