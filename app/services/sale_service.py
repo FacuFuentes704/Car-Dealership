@@ -4,8 +4,9 @@ from app.models.sale import Sale
 from app.models.vehicle import Vehicle, Status
 from app.models.client import Client
 from app.schemas.sale import SaleCreate, SaleUpdate
-from datetime import date
+from datetime import date, datetime, time
 from app.models.client_vehicle_interest import ClientVehicleInterest
+from sqlalchemy import func, or_
 
 def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
     vehiculo = db.query(Vehicle).filter(Vehicle.id == sale_data.vehicle_id).first()
@@ -39,10 +40,13 @@ def get_sales(db: Session, search: str = None, fecha_desde: date = None, fecha_h
             Vehicle.brand.ilike(f"%{search}%") |
             Vehicle.model.ilike(f"%{search}%")
         )
+
+    fecha_efectiva = func.coalesce(Sale.sale_date, Sale.created_at)
+
     if fecha_desde:
-        query = query.filter(Sale.created_at >= fecha_desde)
+        query = query.filter(fecha_efectiva >= datetime.combine(fecha_desde, time.min))
     if fecha_hasta:
-        query = query.filter(Sale.created_at <= fecha_hasta)
+        query = query.filter(fecha_efectiva <= datetime.combine(fecha_hasta, time.max))
 
     return query.all()
 
