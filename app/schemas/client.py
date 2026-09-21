@@ -18,7 +18,7 @@ class ClientResponse(BaseModel):
     id: int
     name: str
     status: ClientStatus
-    sales: list[SaleSummaryConVehiculo] = []
+    sales: list[SaleSummaryConVehiculo] = [ ]
     is_active: bool
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
