@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 from app.models.vehicle import FuelType, Status, Transmission, Condition
 from app.schemas.photo import PhotoResponse
+from app.schemas.sale import SaleSummary
 from app.schemas.Interests import VehicleInterestResponse
 
 class VehicleCreate(BaseModel):
@@ -28,6 +29,7 @@ class VehicleResponse(BaseModel):
     color: Optional[str] = None
     photos: list[PhotoResponse] = []
     brand: str
+    sale: Optional[SaleSummary] = None
     is_active: bool
     is_offer: Optional[bool] = None
     condition: Condition

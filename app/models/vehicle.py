@@ -47,3 +47,4 @@ class Vehicle(Base):
 
     interested_clients = relationship("ClientVehicleInterest", back_populates="vehicle")
     photos = relationship("Photo", back_populates="vehicle")
+    sale = relationship("Sale", uselist=False, back_populates="vehicle")

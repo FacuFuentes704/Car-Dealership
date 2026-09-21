@@ -34,3 +34,23 @@ class SaleUpdate(BaseModel):
     payment_method: Optional[PaymentMethod] = None
     sale_date: Optional[datetime] = None
     notes: Optional[str] = None
+
+class SaleSummary(BaseModel):
+    id: int
+    sale_price: int
+    sale_date: Optional[datetime] = None
+    created_at: datetime
+    client: ClientSummary
+
+    class Config:
+        from_attributes = True
+
+class SaleSummaryConVehiculo(BaseModel):
+    id: int
+    sale_price: int
+    sale_date: Optional[datetime] = None
+    created_at: datetime
+    vehicle: VehicleSummary
+
+    class Config:
+        from_attributes = True

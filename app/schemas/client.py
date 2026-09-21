@@ -3,6 +3,7 @@ from typing import Optional
 from app.models.client import ClientStatus
 from datetime import datetime
 from app.schemas.Interests import InterestResponse
+from app.schemas.sale import SaleSummaryConVehiculo
 
 
 class ClientCreate(BaseModel):
@@ -17,6 +18,7 @@ class ClientResponse(BaseModel):
     id: int
     name: str
     status: ClientStatus
+    sales: list[SaleSummaryConVehiculo] = []
     is_active: bool
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
