@@ -4,6 +4,7 @@ from app.models.sale import Sale
 from app.models.vehicle import Vehicle, Status
 from app.models.client import Client
 from app.schemas.sale import SaleCreate, SaleUpdate
+from datetime import date
 from app.models.client_vehicle_interest import ClientVehicleInterest
 
 def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
@@ -29,9 +30,21 @@ def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
     db.refresh(new_sale)
     return new_sale
     
-def get_sales(db: Session):
-    resultado = db.query(Sale).all()
-    return resultado
+def get_sales(db: Session, search: str = None, fecha_desde: date = None, fecha_hasta: date = None):
+    query = db.query(Sale).join(Client).join(Vehicle)
+
+    if search:
+        query = query.filter(
+            Client.name.ilike(f"%{search}%") |
+            Vehicle.brand.ilike(f"%{search}%") |
+            Vehicle.model.ilike(f"%{search}%")
+        )
+    if fecha_desde:
+        query = query.filter(Sale.created_at >= fecha_desde)
+    if fecha_hasta:
+        query = query.filter(Sale.created_at <= fecha_hasta)
+
+    return query.all()
 
 def get_sales_by_id(db: Session, sale_id: int):
     resultado = db.query(Sale).filter(Sale.id == sale_id).first()

@@ -23,3 +23,4 @@ class Client(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     interests = relationship("ClientVehicleInterest", back_populates="client")
+    sales = relationship("Sale", back_populates="client")
