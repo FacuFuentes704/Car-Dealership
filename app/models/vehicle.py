@@ -40,6 +40,7 @@ class Vehicle(Base):
     plate = Column(String(100))
     km = Column(Integer)
     price = Column(Integer, nullable=False)
+    price_cash = Column(Integer, nullable=True)
     description = Column(String)
     condition = Column(Enum(Condition), default=Condition.used)
     is_active = Column(Boolean, default=True)

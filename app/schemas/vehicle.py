@@ -13,11 +13,11 @@ class VehicleCreate(BaseModel):
     color: Optional[str] = None
     is_offer: Optional[bool] = None
     brand: str
+    price_cash: Optional[int] = None
     model: str
     condition: Optional[Condition] = Condition.used
     year: int
     plate: Optional[str] = None
-    is_offer: bool
     km: Optional[int] = 0
     price: int
     description: Optional[str] = None
@@ -33,8 +33,8 @@ class VehicleResponse(BaseModel):
     is_active: bool
     is_offer: Optional[bool] = None
     condition: Condition
+    price_cash: Optional[int] = None
     fuel_type: FuelType
-    is_offer: bool
     model: str
     interested_clients: list[VehicleInterestResponse] = []
     year: int
@@ -56,7 +56,6 @@ class VehiclePublicResponse(BaseModel):
     fuel_type: FuelType
     is_offer:Optional[bool] = None
     condition: Condition
-    is_offer: bool
     model: str
     year: int
     km: int
@@ -75,8 +74,8 @@ class VehicleUpdate(BaseModel):
     is_offer: Optional [bool] = None
     model: Optional[str] = None
     year: Optional[int] = None
+    price_cash: Optional[int] = None
     condition: Optional[Condition] = None
-    is_offer: bool
     plate: Optional[str] = None
     is_active: Optional[bool] = None
     km: Optional[int] = None
