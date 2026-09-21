@@ -27,6 +27,7 @@ from app.models.photo import Photo
 from app.models.client import Client
 from app.models.client_vehicle_interest import ClientVehicleInterest
 from app.models.sale import Sale
+from app.models.company_settings import CompanySettings
 
 target_metadata = Base.metadata
 

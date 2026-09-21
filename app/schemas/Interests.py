@@ -9,6 +9,9 @@ class VehicleSummary(BaseModel):
     year: int
     price: int
     status: str
+    plate: Optional[str] = None
+    engine_number: Optional[str] = None
+    chassis_number: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -18,6 +21,9 @@ class ClientSummary(BaseModel):
     name: str
     phone: Optional[str] = None
     status: str
+    address: Optional[str] = None
+    locality: Optional[str] = None
+    document_number: Optional[str] = None
 
     class Config:
         from_attributes = True

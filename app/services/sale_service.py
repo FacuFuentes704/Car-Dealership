@@ -11,17 +11,32 @@ from sqlalchemy import func, or_
 def create_sale(db: Session, sale_data: SaleCreate, employee_id: int):
     vehiculo = db.query(Vehicle).filter(Vehicle.id == sale_data.vehicle_id).first()
     if not vehiculo:
-        raise HTTPException(status_code= 404, detail="Vehiculo no existente")
+        raise HTTPException(status_code=404, detail="Vehiculo no existente")
     cliente = db.query(Client).filter(Client.id == sale_data.client_id).first()
     if not cliente:
-        raise HTTPException(status_code= 404, detail="Cliente no existente")
+        raise HTTPException(status_code=404, detail="Cliente no existente")
     if cliente.is_active is False:
-        raise HTTPException(status_code= 400, detail="Cliente inactivo")
+        raise HTTPException(status_code=400, detail="Cliente inactivo")
     if vehiculo.is_active is False:
-        raise HTTPException(status_code= 400, detail= "Vehiculo inactivo")
+        raise HTTPException(status_code=400, detail="Vehiculo inactivo")
     if vehiculo.status != Status.available:
         raise HTTPException(status_code=400, detail="Vehiculo no disponible")
-    new_sale = Sale(**sale_data.model_dump(), employee_id = employee_id)
+    if sale_data.engine_number:
+        vehiculo.engine_number = sale_data.engine_number
+    if sale_data.chassis_number:
+        vehiculo.chassis_number = sale_data.chassis_number
+    if sale_data.client_address:
+        cliente.address = sale_data.client_address
+    if sale_data.client_locality:
+        cliente.locality = sale_data.client_locality
+    if sale_data.client_document_number:
+        cliente.document_number = sale_data.client_document_number
+    datos_venta = sale_data.model_dump(exclude={
+        "engine_number", "chassis_number",
+        "client_address", "client_locality", "client_document_number"
+    })
+
+    new_sale = Sale(**datos_venta, employee_id=employee_id)
     db.add(new_sale)
     vehiculo.status = Status.sold
     resultado = db.query(ClientVehicleInterest).filter(ClientVehicleInterest.vehicle_id == sale_data.vehicle_id).all()

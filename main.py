@@ -14,6 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.limiter import limiter
+from app.models.company_settings import CompanySettings 
+from app.routers.company_settings import company_settings_router
 
 app = FastAPI()
 
@@ -32,3 +34,4 @@ app.include_router(auth_router)
 app.include_router(vehicles_router)
 app.include_router(clients_router)
 app.include_router(sales_router)
+app.include_router(company_settings_router)

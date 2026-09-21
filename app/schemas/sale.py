@@ -12,6 +12,22 @@ class SaleCreate(BaseModel):
     sale_date: Optional[datetime] = None
     notes: Optional[str] = None
 
+    reserva_amount: Optional[int] = None
+    entrega_amount: Optional[int] = None
+    otros_amount: Optional[int] = None
+    saldo_financiado: Optional[int] = None
+    cantidad_cuotas: Optional[int] = None
+    monto_cuota: Optional[int] = None
+    fecha_primera_cuota: Optional[datetime] = None
+    observaciones: Optional[str] = None
+
+    engine_number: Optional[str] = None
+    chassis_number: Optional[str] = None
+
+    client_address: Optional[str] = None
+    client_locality: Optional[str] = None
+    client_document_number: Optional[str] = None
+
 class SaleResponse(BaseModel):
     id: int
     client: ClientSummary
@@ -21,6 +37,14 @@ class SaleResponse(BaseModel):
     payment_method: Optional[PaymentMethod] = None
     sale_date: Optional[datetime] = None
     notes: Optional[str] = None
+    reserva_amount: Optional[int] = None
+    entrega_amount: Optional[int] = None
+    otros_amount: Optional[int] = None
+    saldo_financiado: Optional[int] = None
+    cantidad_cuotas: Optional[int] = None
+    monto_cuota: Optional[int] = None
+    fecha_primera_cuota: Optional[datetime] = None
+    observaciones: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -53,4 +77,4 @@ class SaleSummaryConVehiculo(BaseModel):
     vehicle: VehicleSummary
 
     class Config:
-        from_attributes = True
+        from_attributes = True  
