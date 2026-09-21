@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.user import UserUpdate, UserCreate, UserLogin, UserResponse, TokenResponse
 from app.services.user_service import register_user, login_user, update_user, delete_user, get_user_profile
 from app.models.user import User
 from app.auth.auth import get_current_user
+from app.limiter import limiter
 
 users_router = APIRouter(prefix="/users", tags=["users"])
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
@@ -14,7 +15,8 @@ def register(user_data: UserCreate, db: Session = Depends(get_db), user_id: User
     return register_user(user_data, db)
 
 @auth_router.post("/login", response_model=TokenResponse)
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
     return login_user(db, user_data)
 
 @users_router.patch("/me", response_model=UserResponse)

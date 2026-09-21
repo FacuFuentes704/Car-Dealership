@@ -12,9 +12,10 @@ if not SECRET_KEY:
 ALGORITHM = os.getenv("ALGORITHM")
 if not ALGORITHM:
     raise RuntimeError("FALTA LA VARIABLE ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-if not ACCESS_TOKEN_EXPIRE_MINUTES:
-    raise RuntimeError("FALTA LA VARIABLE ACCESS_TOKEN_EXPIRE_MINUTES")
+try:
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+except(TypeError, ValueError):
+    raise RuntimeError("FALTA LA VARIABLE ACCESS_TOKEN_EXPIRE_MINUTES o no es un numero valido")
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
