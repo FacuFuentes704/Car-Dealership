@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import String, Integer, DateTime, Boolean, Column, Enum
+from sqlalchemy import String, Integer, DateTime, Boolean, Column, Enum, JSON
 import enum
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -38,6 +38,7 @@ class Vehicle(Base):
     year = Column(Integer, nullable=False)
     plate = Column(String(100))
     km = Column(Integer)
+    features = Column(JSON, nullable=True)
     price = Column(Integer, nullable=False)
     price_cash = Column(Integer, nullable=True)
     description = Column(String)

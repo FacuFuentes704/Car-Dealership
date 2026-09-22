@@ -21,6 +21,7 @@ class VehicleCreate(BaseModel):
     km: Optional[int] = 0
     price: int
     description: Optional[str] = None
+    features: Optional[dict] = None
 
 class VehicleResponse(BaseModel):
     id: int
@@ -44,6 +45,7 @@ class VehicleResponse(BaseModel):
     description: Optional[str] = None
     engine_number: Optional[str] = None
     chassis_number: Optional[str] = None
+    features: Optional[dict] = None
     created_at: datetime
 
     class Config:
@@ -63,6 +65,7 @@ class VehiclePublicResponse(BaseModel):
     km: int
     price: int
     description: Optional[str] = None
+    features: Optional[dict] = None
     photos: list[PhotoResponse] = []
 
     class Config:
@@ -85,3 +88,4 @@ class VehicleUpdate(BaseModel):
     description: Optional[str] = None
     engine_number: Optional[str] = None
     chassis_number: Optional[str] = None
+    features: Optional[dict] = None
