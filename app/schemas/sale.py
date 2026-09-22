@@ -74,7 +74,7 @@ class SaleSummary(BaseModel):
     sale_price: int
     sale_date: Optional[datetime] = None
     created_at: datetime
-    boleto_generado: bool = False
+    boleto_generado: Optional[bool] = False
     client: ClientSummary
 
     class Config:
@@ -85,7 +85,7 @@ class SaleSummaryConVehiculo(BaseModel):
     sale_price: int
     sale_date: Optional[datetime] = None
     created_at: datetime
-    boleto_generado: bool = False
+    boleto_generado: Optional[bool] = False
     vehicle: VehicleSummary
 
     class Config:
