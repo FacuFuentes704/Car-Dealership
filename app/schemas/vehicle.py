@@ -42,6 +42,8 @@ class VehicleResponse(BaseModel):
     km: int
     price: int
     description: Optional[str] = None
+    engine_number: Optional[str] = None
+    chassis_number: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -71,7 +73,7 @@ class VehicleUpdate(BaseModel):
     status: Optional[Status] = None
     color: Optional[str] = None
     brand: Optional[str] = None
-    is_offer: Optional [bool] = None
+    is_offer: Optional[bool] = None
     model: Optional[str] = None
     year: Optional[int] = None
     price_cash: Optional[int] = None
@@ -81,3 +83,5 @@ class VehicleUpdate(BaseModel):
     km: Optional[int] = None
     price: Optional[int] = None
     description: Optional[str] = None
+    engine_number: Optional[str] = None
+    chassis_number: Optional[str] = None

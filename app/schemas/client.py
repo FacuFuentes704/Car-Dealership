@@ -33,6 +33,9 @@ class ClientUpdate(BaseModel):
     name: Optional[str] = None
     status: Optional[ClientStatus] = None
     email: Optional[EmailStr] = None
-    is_active: Optional [bool] = None
+    is_active: Optional[bool] = None
     notes: Optional[str] = None
     phone: Optional[str] = None
+    address: Optional[str] = None
+    locality: Optional[str] = None
+    document_number: Optional[str] = None
