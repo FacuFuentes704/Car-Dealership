@@ -14,7 +14,7 @@ class SaleCreate(BaseModel):
 
     reserva_amount: Optional[int] = None
     entrega_amount: Optional[int] = None
-    otros_amount: Optional[int] = None
+    otros_amount: Optional[str] = None
     saldo_financiado: Optional[int] = None
     cantidad_cuotas: Optional[int] = None
     monto_cuota: Optional[int] = None
@@ -40,7 +40,7 @@ class SaleResponse(BaseModel):
     boleto_generado: Optional[bool] = None
     reserva_amount: Optional[int] = None
     entrega_amount: Optional[int] = None
-    otros_amount: Optional[int] = None
+    otros_amount: Optional[str] = None
     saldo_financiado: Optional[int] = None
     cantidad_cuotas: Optional[int] = None
     monto_cuota: Optional[int] = None
@@ -60,6 +60,14 @@ class SaleUpdate(BaseModel):
     sale_date: Optional[datetime] = None
     boleto_generado: Optional[bool] = None
     notes: Optional[str] = None
+    reserva_amount: Optional[int] = None
+    entrega_amount: Optional[int] = None
+    otros_amount: Optional[str] = None
+    saldo_financiado: Optional[int] = None
+    cantidad_cuotas: Optional[int] = None
+    monto_cuota: Optional[int] = None
+    fecha_primera_cuota: Optional[datetime] = None
+    observaciones: Optional[str] = None
 
 class SaleSummary(BaseModel):
     id: int

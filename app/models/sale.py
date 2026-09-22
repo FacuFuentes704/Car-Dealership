@@ -23,7 +23,7 @@ class Sale(Base):
     payment_method = Column(Enum(PaymentMethod))
     reserva_amount = Column(Integer, nullable=True)
     entrega_amount = Column(Integer, nullable=True)
-    otros_amount = Column(Integer, nullable=True)
+    otros_amount = Column(String, nullable=True)
     saldo_financiado = Column(Integer, nullable=True)
     boleto_generado = Column(Boolean, default=False)
     cantidad_cuotas = Column(Integer, nullable=True)
