@@ -7,7 +7,7 @@ class VehicleSummary(BaseModel):
     brand: str
     model: str
     year: int
-    price: int
+    price: Optional[int] = None
     status: str
     plate: Optional[str] = None
     engine_number: Optional[str] = None

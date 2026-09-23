@@ -19,7 +19,7 @@ class VehicleCreate(BaseModel):
     year: int
     plate: Optional[str] = None
     km: Optional[int] = 0
-    price: int
+    price: Optional[int] = None
     description: Optional[str] = None
     features: Optional[dict] = None
 
@@ -41,7 +41,7 @@ class VehicleResponse(BaseModel):
     year: int
     plate: Optional[str] = None
     km: int
-    price: int
+    price: Optional[int] = None
     description: Optional[str] = None
     engine_number: Optional[str] = None
     chassis_number: Optional[str] = None
@@ -63,7 +63,7 @@ class VehiclePublicResponse(BaseModel):
     model: str
     year: int
     km: int
-    price: int
+    price: Optional[int] = None
     description: Optional[str] = None
     features: Optional[dict] = None
     photos: list[PhotoResponse] = []
