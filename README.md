@@ -3,24 +3,20 @@
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688)
 ![React](https://img.shields.io/badge/React-19-61DAFB)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791)
-![License](https://img.shields.io/badge/license-privado-lightgrey)
 
-Sistema full-stack real, en producción, construido para **LGi Motors**, una agencia de compra-venta de vehículos en Venado Tuerto, Santa Fe (Argentina). Incluye un catálogo público y un panel de administración completo para gestionar vehículos, clientes, ventas y la documentación legal de cada operación.
+Sistema de gestión para **LGi Motors**, una agencia de compra-venta de vehículos en Venado Tuerto, Santa Fe. Incluye un catálogo público y un panel de administración para vehículos, clientes, ventas y la documentación de cada operación.
 
-**🔗 Sitio en producción:** [lgimotors.com](https://lgimotors.com)
-**📄 Documentación de la API (Swagger):** [car-dealership-api-7k16.onrender.com/docs](https://car-dealership-api-7k16.onrender.com/docs)
-**🖥️ Repo del frontend:** [car-dealership-frontend](https://github.com/FacuFuentes704/car-dealership-frontend)
+**Sitio en producción:** [lgimotors.com](https://lgimotors.com)
+**Documentación de la API:** [car-dealership-api-7k16.onrender.com/docs](https://car-dealership-api-7k16.onrender.com/docs)
+**Repo del frontend:** [car-dealership-frontend](https://github.com/FacuFuentes704/car-dealership-frontend)
 
-<!-- TODO: agregar capturas de pantalla del catálogo público y del panel de admin -->
+<!-- TODO: agregar capturas del catálogo público y del panel de admin -->
 
 ---
 
 ## Contexto del proyecto
 
-LGi Motors gestionaba su stock y sus clientes de forma manual, sin ningún catálogo online ni un sistema centralizado para hacer seguimiento de ventas. Este proyecto resuelve ambos problemas: un **sitio público** donde cualquier persona puede ver el stock disponible, filtrarlo y contactar por WhatsApp, y un **panel privado** donde el personal de la agencia administra vehículos, clientes, intereses, ventas y genera el boleto de compra-venta oficial — replicando el formato de papel que la agencia ya usaba, pero con los datos autocompletados desde el sistema.
-
-No es un proyecto de práctica aislado: es la herramienta que la agencia usa hoy, con datos y clientes reales.
+Antes de este proyecto, la agencia gestionaba el stock y los clientes a mano, sin catálogo online ni ningún registro centralizado de ventas. Armé un sitio público con el catálogo filtrable y un panel de administración completo — vehículos, clientes, ventas y el boleto de compra-venta oficial — que la agencia usa hoy para operar, con datos y clientes reales.
 
 ---
 
@@ -35,23 +31,39 @@ No es un proyecto de práctica aislado: es la herramienta que la agencia usa hoy
 - Página de financiación
 - Modo oscuro / claro
 - SEO básico (meta description, Open Graph) y política de privacidad
-- Totalmente responsive
+- Responsive
 
 ### Panel de administración (protegido con JWT)
 
-- **Dashboard** con estadísticas de vehículos y clientes
-- **Vehículos**: alta/baja/edición, carga de múltiples fotos con foto principal, patente, precio de permuta y precio de contado (privado), número de motor/chasis, equipamiento, planilla de stock imprimible (solo vehículos activos y disponibles)
-- **Clientes**: alta/baja/edición, domicilio/documento (para el boleto), historial de compras
-- **Intereses**: relación muchos-a-muchos entre clientes y vehículos, gestionable desde ambos lados
-- **Ventas**: registro con desglose de pago (reserva, entrega, saldo financiado, cuotas), búsqueda y filtro por rango de fechas; al cerrarse, marca el vehículo como vendido y limpia sus intereses automáticamente
-- **Boleto de compra-venta**: documento imprimible con el formato legal real usado por la agencia, con modo edición/solo-lectura y datos autocompletados desde vehículo, cliente y venta
-- **Configuración de la agencia**: datos fijos de la empresa (razón social, domicilio, CUIT) usados en el boleto
+- Dashboard con estadísticas de vehículos y clientes
+- Vehículos: alta/baja/edición, carga de múltiples fotos con foto principal, patente, precio de permuta y precio de contado (privado), número de motor/chasis, equipamiento, planilla de stock imprimible (solo vehículos activos y disponibles)
+- Clientes: alta/baja/edición, domicilio/documento (para el boleto), historial de compras
+- Intereses: relación entre clientes y vehículos, gestionable desde ambos lados
+- Ventas: registro con desglose de pago (reserva, entrega, saldo financiado, cuotas), búsqueda y filtro por rango de fechas; al cerrarse, marca el vehículo como vendido y limpia sus intereses automáticamente
+- Boleto de compra-venta: documento imprimible con el formato legal real que usa la agencia en papel, con modo edición/solo-lectura y datos autocompletados desde vehículo, cliente y venta
+- Configuración de la agencia: datos fijos de la empresa usados en el boleto
+
+---
+
+## Decisiones técnicas
+
+Algunas decisiones y problemas reales que aparecieron construyendo esto, no solo al escribir el código sino al ponerlo en uso real:
+
+- **Separar `price` de `price_cash`**: el modelo de `Vehicle` original solo tenía un precio. La agencia necesitaba manejar precio de permuta y precio de contado por separado — tanto en el panel como distinguidos en la planilla impresa. No lo había contemplado al armar los modelos iniciales, así que agregué `price_cash` como campo nuevo en vez de forzar un mismo campo a cumplir dos funciones distintas.
+
+- **Un campo JSON para el equipamiento (`features`)**: en vez de una columna booleana por cada característica del vehículo (aire acondicionado, ABS, airbags, etc.), usé una sola columna JSON. Agregar una característica nueva a la lista no requiere ninguna migración de base de datos, solo un cambio en el frontend.
+
+- **Dónde guardar los datos del boleto**: motor y chasis del vehículo, domicilio y documento del cliente, son datos que recién se conocen al cerrar una venta, no al cargar el vehículo o el cliente. En vez de una tabla aparte ligada solo a esa venta, decidí que se guarden directamente en el vehículo y el cliente reales — así, si el mismo cliente vuelve a comprar, esos datos ya están cargados.
+
+- **Rate limiting que no funcionaba en producción**: configuré `slowapi` para limitar los intentos de login por IP; en local funcionaba, en producción no bloqueaba nada. Render enruta el tráfico por su propia infraestructura, así que cada pedido le llegaba a mi backend desde una IP interna distinta de Render, no la del cliente real — nunca se acumulaban los intentos de la misma persona. Lo resolví leyendo la IP real desde el header `X-Forwarded-For`.
+
+- **Services levantando `HTTPException` directamente**: en este proyecto, los services (no solo los routers) levantan excepciones HTTP cuando algo no existe o una regla de negocio falla. Es una práctica común en FastAPI, aunque técnicamente implica que la capa de datos conoce HTTP — una separación más estricta dejaría esa decisión únicamente en el router. Lo mantuve así por simplicidad, siendo consciente del trade-off.
 
 ---
 
 ## Arquitectura
 
-**Backend** — arquitectura en capas clásica:
+**Backend** — capas separadas por responsabilidad:
 
 ```
 Router → Service → Model (SQLAlchemy) → PostgreSQL
@@ -59,9 +71,9 @@ Router → Service → Model (SQLAlchemy) → PostgreSQL
           Schema (Pydantic) → Response
 ```
 
-Cada recurso (`vehicles`, `clients`, `sales`, `users`, `company_settings`) sigue el mismo patrón: el router recibe la petición y delega, el service contiene la lógica de negocio, y los schemas de Pydantic validan entrada y salida por separado (`Create` / `Update` / `Response`), sin exponer nunca el modelo de base de datos directamente.
+Cada recurso (`vehicles`, `clients`, `sales`, `users`, `company_settings`) sigue el mismo patrón: el router recibe la petición y delega, el service contiene la lógica de negocio, y los schemas de Pydantic validan entrada y salida por separado (`Create` / `Update` / `Response`), sin exponer el modelo de base de datos directamente.
 
-**Frontend** — SPA de React organizada por dominio (`admin/Vehiculos`, `admin/Clientes`, `admin/Ventas`, `admin/Boleto`), con capas de admin (protegidas) y público separadas mediante layouts distintos, cada uno con su propio `<Outlet />`.
+**Frontend** — SPA de React organizada por dominio (`admin/Vehiculos`, `admin/Clientes`, `admin/Ventas`, `admin/Boleto`), con layouts separados para el sitio público y el panel privado.
 
 ---
 
@@ -71,16 +83,16 @@ Cada recurso (`vehicles`, `clients`, `sales`, `users`, `company_settings`) sigue
 - Python 3.11 + FastAPI
 - SQLAlchemy + Alembic (migraciones versionadas)
 - PostgreSQL
-- Autenticación JWT (`python-jose`) + hashing de contraseñas con `bcrypt`
-- `slowapi` para rate limiting (protección contra fuerza bruta en el login)
+- JWT (`python-jose`) + hashing de contraseñas con `bcrypt`
+- `slowapi` para rate limiting
 - Cloudinary para almacenamiento de imágenes
-- `pytest` — 31 tests automatizados (auth, CRUD, reglas de negocio, rate limiting)
+- `pytest` — 31 tests automatizados
 - Docker + despliegue en Render
 
 **Frontend**
 - React 19 + Vite
 - React Router v7
-- `fetch` nativo (sin librerías de estado de servidor)
+- `fetch` nativo
 - Despliegue en Vercel, dominio propio vía Namecheap
 
 ---
@@ -89,11 +101,11 @@ Cada recurso (`vehicles`, `clients`, `sales`, `users`, `company_settings`) sigue
 
 - Contraseñas hasheadas con `bcrypt`, nunca almacenadas ni devueltas en texto plano
 - Tokens JWT con expiración
-- Rate limiting en el login (5 intentos por minuto por IP, detectando la IP real detrás del proxy de Render vía `X-Forwarded-For`)
+- Rate limiting en el login (5 intentos por minuto por IP)
 - CORS restringido al dominio de producción
-- Sanitización de campos de texto libre (`html.escape`) antes de persistir
-- Validación de variables de entorno al arrancar la aplicación (falla rápido y con mensaje claro si falta una)
-- Baja lógica (`is_active`) en vehículos y clientes en vez de borrado físico — preserva el historial
+- Sanitización de campos de texto libre antes de persistir
+- Validación de variables de entorno al arrancar la aplicación
+- Baja lógica (`is_active`) en vehículos y clientes en vez de borrado físico
 
 ---
 
@@ -123,14 +135,12 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 ```
 
-Aplicá las migraciones y levantá el servidor:
-
 ```bash
 python -m alembic upgrade head
 python -m uvicorn main:app --reload
 ```
 
-La API queda disponible en `http://localhost:8000`, con documentación interactiva en `http://localhost:8000/docs`.
+API disponible en `http://localhost:8000`, documentación en `http://localhost:8000/docs`.
 
 ### Tests
 
