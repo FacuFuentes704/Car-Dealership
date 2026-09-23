@@ -74,3 +74,13 @@ def test_delete_perfil(client, token_usuario):
         "password": "password123"
     })
     assert login_response.status_code == 403
+
+def test_rate_limit_login(client):
+    credenciales = {"email": "spam@test.com", "password": "cualquiera"}
+
+    for _ in range(5):
+        respuesta = client.post("/auth/login", json=credenciales)
+        assert respuesta.status_code == 401
+
+    respuesta_bloqueada = client.post("/auth/login", json=credenciales)
+    assert respuesta_bloqueada.status_code == 429
