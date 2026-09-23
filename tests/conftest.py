@@ -10,6 +10,7 @@ from app.models.vehicle import Vehicle, Status
 from app.models.client import Client, ClientStatus
 from app.models.client_vehicle_interest import ClientVehicleInterest
 from app.models.sale import Sale, PaymentMethod
+from app.limiter import limiter
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
@@ -159,3 +160,8 @@ def vehiculo_no_disponible(db):
     db.add(vehiculo)
     db.commit()
     return vehiculo
+
+@pytest.fixture(autouse=True)
+def resetear_limiter():
+    limiter.reset()
+    yield
