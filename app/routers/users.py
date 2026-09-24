@@ -20,7 +20,7 @@ def register(user_data: UserCreate, db: Session = Depends(get_db), user_id: User
 @auth_router.post("/login", response_model=TokenResponse)
 @limiter.limit("5/minute")
 def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
-    logger.info(f"XFF recibido: {request.headers.get('x-forwarded-for')}")
+    print(f"XFF recibido: {request.headers.get('x-forwarded-for')}", flush=True)
     return login_user(db, user_data)
 
 @users_router.patch("/me", response_model=UserResponse)
