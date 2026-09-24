@@ -82,10 +82,13 @@ def update_sale(db:Session, sale_data: SaleUpdate, sale_id: int):
     db.refresh(resultado)
     return resultado
 
-def delete_sale(db: Session, sale_id:int):
+def delete_sale(db: Session, sale_id: int):
     resultado = db.query(Sale).filter(Sale.id == sale_id).first()
     if not resultado:
         raise HTTPException(status_code=404, detail="Venta no encontrada")
+    vehiculo = db.query(Vehicle).filter(Vehicle.id == resultado.vehicle_id).first()
+    if vehiculo:
+        vehiculo.status = Status.available
     db.delete(resultado)
     db.commit()
     return

@@ -5,6 +5,7 @@ from app.models.client_vehicle_interest import ClientVehicleInterest
 from app.schemas.client import ClientStatus, ClientCreate, ClientUpdate
 from app.models.vehicle import Vehicle
 from datetime import datetime
+import html
 
 def create_client(db: Session, client_data: ClientCreate):
     resultado = db.query(Client).filter(client_data.phone == Client.phone).first()
@@ -15,7 +16,7 @@ def create_client(db: Session, client_data: ClientCreate):
         status=client_data.status,
         phone=client_data.phone,
         email=client_data.email,
-        notes=client_data.notes
+        notes=html.escape(client_data.notes) if client_data.notes else client_data.notes
     )
     db.add(new_client)
     db.flush()
@@ -54,6 +55,9 @@ def update_client(db: Session, client_data: ClientUpdate, client_id:int):
     if not resultado:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
     datos = client_data.model_dump(exclude_unset=True)
+    for campo in ("notes", "address", "locality"):
+        if campo in datos and datos[campo]:
+            datos[campo] = html.escape(datos[campo])
     for campo, valor in datos.items():
         setattr(resultado, campo, valor)
     db.commit()

@@ -6,9 +6,12 @@ from app.services.user_service import register_user, login_user, update_user, de
 from app.models.user import User
 from app.auth.auth import get_current_user
 from app.limiter import limiter
+import logging
 
 users_router = APIRouter(prefix="/users", tags=["users"])
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
+
+logger = logging.getLogger("Uvicorn")
 
 @users_router.post("/register", response_model=UserResponse)
 def register(user_data: UserCreate, db: Session = Depends(get_db), user_id: User = Depends(get_current_user)):
@@ -17,6 +20,7 @@ def register(user_data: UserCreate, db: Session = Depends(get_db), user_id: User
 @auth_router.post("/login", response_model=TokenResponse)
 @limiter.limit("5/minute")
 def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
+    logger.info(f"XFF recibido: {request.headers.get('x-forwarded-for')}")
     return login_user(db, user_data)
 
 @users_router.patch("/me", response_model=UserResponse)

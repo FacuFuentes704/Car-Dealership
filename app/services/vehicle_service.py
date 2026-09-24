@@ -4,13 +4,17 @@ from app.models.vehicle import Vehicle
 from app.models.sale import Sale
 from sqlalchemy.orm import Session
 from datetime import datetime
+import html
 
 def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     if vehicle_data.plate:
         resultado = db.query(Vehicle).filter(Vehicle.plate == vehicle_data.plate).first()
         if resultado:
             raise HTTPException(status_code=400, detail="Patente duplicada")
-    new_vehicle = Vehicle(**vehicle_data.model_dump())
+    datos = vehicle_data.model_dump()
+    if datos.get("description"):
+        datos["description"] = html.escape(datos["description"])
+    new_vehicle = Vehicle(**datos)
     db.add(new_vehicle)
     db.commit()
     db.refresh(new_vehicle)
@@ -61,6 +65,8 @@ def update_vehicle(db: Session, vehicle_data: VehicleUpdate, vehicle_id: int):
     if not resultado:
         raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
     datos = vehicle_data.model_dump(exclude_unset=True)
+    if "description" in datos and datos["description"]:
+        datos["description"] = html.escape(datos["description"])
     for campo, valor in datos.items():
         setattr(resultado, campo, valor)
     db.commit()

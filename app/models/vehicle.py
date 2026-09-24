@@ -37,6 +37,7 @@ class Vehicle(Base):
     model = Column(String(150), nullable=False)
     year = Column(Integer, nullable=False)
     plate = Column(String(100))
+    price_internal = Column(Integer, nullable=True)
     km = Column(Integer)
     features = Column(JSON, nullable=True)
     price = Column(Integer, nullable=True)
