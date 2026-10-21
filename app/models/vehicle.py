@@ -18,6 +18,7 @@ class Transmission(str, enum.Enum):
 class Status(str, enum.Enum):
     available = "available"
     reserved = "reserved"
+    unpublished = "unpublished"
     sold = "sold"
 
 class Condition(str, enum.Enum):

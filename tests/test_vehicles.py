@@ -136,3 +136,31 @@ def test_admin_ve_km_interno(client, token_usuario):
     creado = client.post("/vehicles/", json=_vehiculo_payload(km=None, km_internal=45000), headers=headers).json()
     detalle = client.get(f"/vehicles/{creado['id']}/admin", headers=headers).json()
     assert detalle["km_internal"] == 45000
+
+
+def test_vehiculo_sin_publicar_no_aparece_en_catalogo_publico(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    creado = client.post("/vehicles/", json=_vehiculo_payload(status="unpublished"), headers=headers)
+    assert creado.status_code == 200
+    assert creado.json()["status"] == "unpublished"
+    vehiculo_id = creado.json()["id"]
+
+    # Ni sin filtro de status ni pidiendolo explicitamente
+    assert vehiculo_id not in [v["id"] for v in client.get("/vehicles/").json()]
+    assert vehiculo_id not in [v["id"] for v in client.get("/vehicles/?status=unpublished").json()]
+    # Ni por link directo
+    assert client.get(f"/vehicles/{vehiculo_id}").status_code == 404
+
+def test_vehiculo_sin_publicar_aparece_en_admin(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    vehiculo_id = client.post("/vehicles/", json=_vehiculo_payload(status="unpublished"), headers=headers).json()["id"]
+
+    ids = [v["id"] for v in client.get("/vehicles/admin?status=unpublished", headers=headers).json()]
+    assert vehiculo_id in ids
+    assert client.get(f"/vehicles/{vehiculo_id}/admin", headers=headers).status_code == 200
+
+def test_publicar_vehiculo_lo_muestra_en_catalogo(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    vehiculo_id = client.post("/vehicles/", json=_vehiculo_payload(status="unpublished"), headers=headers).json()["id"]
+    client.patch(f"/vehicles/{vehiculo_id}", json={"status": "available"}, headers=headers)
+    assert vehiculo_id in [v["id"] for v in client.get("/vehicles/").json()]
