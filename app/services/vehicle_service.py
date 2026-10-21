@@ -32,8 +32,10 @@ def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     db.refresh(new_vehicle)
     return new_vehicle
 
-def get_vehicles(db: Session, only_active: bool = True, is_offer: bool = None, condition: Condition = None,  page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None):
+def get_vehicles(db: Session, only_active: bool = True, is_offer: bool = None, condition: Condition = None,  page: int = 1, limit: int = 20, brand: str = None, model: str = None, year: int = None, price_min: int = None, price_max: int = None, fuel_type: FuelType = None, transmission: Transmission = None, status: Status = None, km_max: int = None, search: str = None, hide_unpublished: bool = False):
     query = db.query(Vehicle)
+    if hide_unpublished:
+        query = query.filter(Vehicle.status != Status.unpublished)
     if only_active:
         query = query.filter(Vehicle.is_active == True)
     filtros = {
@@ -63,9 +65,11 @@ def get_vehicles(db: Session, only_active: bool = True, is_offer: bool = None, c
     query = query.offset((page - 1) * limit).limit(limit)
     return query.all()
 
-def get_vehicles_by_id(db: Session, vehicle_id: int, only_active: bool = True):
+def get_vehicles_by_id(db: Session, vehicle_id: int, only_active: bool = True, hide_unpublished: bool = False):
     resultado = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not resultado:
+        raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
+    if hide_unpublished and resultado.status == Status.unpublished:
         raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
     if only_active:
         if resultado.is_active == False:

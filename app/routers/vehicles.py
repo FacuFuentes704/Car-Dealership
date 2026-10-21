@@ -36,7 +36,7 @@ def show_vehicles(
     km_max: Optional[int] = None,
     search: Optional[str] = None
 ):
-    return get_vehicles(db, True, is_offer, condition, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search)
+    return get_vehicles(db, True, is_offer, condition, page, limit, brand, model, year, price_min, price_max, fuel_type, transmission, status, km_max, search, hide_unpublished=True)
 
 @vehicles_router.get("/admin", response_model=list[VehicleResponse])
 def show_vehicles_adms(
@@ -89,7 +89,7 @@ def up_photo(vehicle_id: int, photo_id: int, db: Session = Depends(get_db), user
 
 @vehicles_router.get("/{vehicle_id}", response_model=VehiclePublicResponse)
 def show_by_id(vehicle_id: int, db: Session = Depends(get_db)):
-    return get_vehicles_by_id(db, vehicle_id, True)
+    return get_vehicles_by_id(db, vehicle_id, True, hide_unpublished=True)
 
 @vehicles_router.get("/{vehicle_id}/admin", response_model=VehicleResponse)
 def show_by_id_adm(vehicle_id: int, only_active: bool = False, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
