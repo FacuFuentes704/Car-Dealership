@@ -6,12 +6,24 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import html
 
+def _sincronizar_km_interno(datos: dict) -> None:
+    """Mantiene km_internal alineado con km cuando el cliente solo manda km.
+
+    km es el valor publico (None = oculto) y km_internal el valor real que
+    siempre se guarda. Si llega un km pero ningun km_internal, se asume que
+    ambos coinciden (clientes viejos de la API que no conocen km_internal).
+    """
+    if datos.get("km") is not None and "km_internal" not in datos:
+        datos["km_internal"] = datos["km"]
+
 def create_vehicle(db: Session, vehicle_data: VehicleCreate):
     if vehicle_data.plate:
         resultado = db.query(Vehicle).filter(Vehicle.plate == vehicle_data.plate).first()
         if resultado:
             raise HTTPException(status_code=400, detail="Patente duplicada")
     datos = vehicle_data.model_dump()
+    if datos.get("km") is not None and datos.get("km_internal") is None:
+        datos["km_internal"] = datos["km"]
     if datos.get("description"):
         datos["description"] = html.escape(datos["description"])
     new_vehicle = Vehicle(**datos)
@@ -65,6 +77,7 @@ def update_vehicle(db: Session, vehicle_data: VehicleUpdate, vehicle_id: int):
     if not resultado:
         raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
     datos = vehicle_data.model_dump(exclude_unset=True)
+    _sincronizar_km_interno(datos)
     if "description" in datos and datos["description"]:
         datos["description"] = html.escape(datos["description"])
     for campo, valor in datos.items():
