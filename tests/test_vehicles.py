@@ -72,3 +72,67 @@ def test_admin_ve_inactivos(client, vehiculo_creado, vehiculo_inactivo, token_us
     assert "Toyota" in marcas
     assert "Ford" in marcas
 
+
+
+def _vehiculo_payload(**extra):
+    base = {
+        "fuel_type": "gasoline",
+        "transmission": "manual",
+        "status": "available",
+        "color": "negro",
+        "brand": "Toyota",
+        "model": "Corolla",
+        "year": 2026,
+        "plate": "AI 111 111",
+        "description": "descripcion de prueba",
+        "condition": "used",
+    }
+    base.update(extra)
+    return base
+
+def test_crear_vehiculo_km_oculto_se_guarda_interno(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    response = client.post("/vehicles/", json=_vehiculo_payload(km=None, km_internal=45000), headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["km"] is None
+    assert data["km_internal"] == 45000
+
+def test_crear_vehiculo_solo_km_completa_km_interno(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    response = client.post("/vehicles/", json=_vehiculo_payload(km=1000), headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["km"] == 1000
+    assert data["km_internal"] == 1000
+
+def test_actualizar_ocultar_km_conserva_interno(client, token_usuario, vehiculo_creado):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    response = client.patch(f"/vehicles/{vehiculo_creado.id}",
+                            json={"km": None, "km_internal": 1000}, headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["km"] is None
+    assert data["km_internal"] == 1000
+
+def test_actualizar_solo_km_sincroniza_interno(client, token_usuario, vehiculo_creado):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    response = client.patch(f"/vehicles/{vehiculo_creado.id}", json={"km": 2500}, headers=headers)
+    assert response.status_code == 200
+    assert response.json()["km_internal"] == 2500
+
+def test_catalogo_publico_no_expone_km_interno(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    creado = client.post("/vehicles/", json=_vehiculo_payload(km=None, km_internal=45000), headers=headers).json()
+
+    listado = client.get("/vehicles/").json()
+    assert all("km_internal" not in v for v in listado)
+    detalle = client.get(f"/vehicles/{creado['id']}").json()
+    assert "km_internal" not in detalle
+    assert detalle["km"] is None
+
+def test_admin_ve_km_interno(client, token_usuario):
+    headers = {"Authorization": f"Bearer {token_usuario}"}
+    creado = client.post("/vehicles/", json=_vehiculo_payload(km=None, km_internal=45000), headers=headers).json()
+    detalle = client.get(f"/vehicles/{creado['id']}/admin", headers=headers).json()
+    assert detalle["km_internal"] == 45000

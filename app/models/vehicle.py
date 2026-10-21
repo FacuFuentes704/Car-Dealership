@@ -39,6 +39,7 @@ class Vehicle(Base):
     plate = Column(String(100))
     price_internal = Column(Integer, nullable=True)
     km = Column(Integer)
+    km_internal = Column(Integer, nullable=True)
     features = Column(JSON, nullable=True)
     price = Column(Integer, nullable=True)
     price_cash = Column(Integer, nullable=True)

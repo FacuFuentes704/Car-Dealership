@@ -20,6 +20,7 @@ class VehicleCreate(BaseModel):
     year: int
     plate: Optional[str] = None
     km: Optional[int] = None
+    km_internal: Optional[int] = None
     price: Optional[int] = None
     description: Optional[str] = None
     features: Optional[dict] = None
@@ -43,6 +44,7 @@ class VehicleResponse(BaseModel):
     year: int
     plate: Optional[str] = None
     km: Optional[int] = None
+    km_internal: Optional[int] = None
     price: Optional[int] = None
     description: Optional[str] = None
     engine_number: Optional[str] = None
@@ -87,6 +89,7 @@ class VehicleUpdate(BaseModel):
     plate: Optional[str] = None
     is_active: Optional[bool] = None
     km: Optional[int] = None
+    km_internal: Optional[int] = None
     transmission: Optional[Transmission] = None
     price: Optional[int] = None
     description: Optional[str] = None
